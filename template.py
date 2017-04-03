@@ -63,11 +63,6 @@ test_df = pd.get_dummies(test_df, columns=["DayOfWeek", "StateHoliday"])
 # store_df                                 #
 ############################################
 
-# Add "AvgSales" & "AvgCustomers" columns to store_df
-avg_sales_customers = training_df.groupby("Store")[["Sales", "Customers"]].mean()
-avg_sales_customers_df = DataFrame({"Store": avg_sales_customers.index, "AvgSales": avg_sales_customers["Sales"], "AvgCustomers": avg_sales_customers["Customers"]}, columns=["Store", "AvgSales", "AvgCustomers"])
-store_df = pd.merge(avg_sales_customers_df, store_df, on="Store")
-
 # Fill NaN values in store_df for "CompetitionDistance" with the median value
 store_df["CompetitionDistance"].fillna(store_df["CompetitionDistance"].median())
 
@@ -89,6 +84,10 @@ store_df = pd.get_dummies(store_df, columns=["StoreType", "Assortment"])
 Describe the model here.
 
 Features: < List of Features Used >
+
+Assumptions:
+- < Assumption 1 >
+- < Assumption 2 >
 """
 
 # Code for training & using actual model goes here.
