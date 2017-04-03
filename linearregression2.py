@@ -33,6 +33,13 @@ test_df = pd.read_csv("data/test.csv")
 def is_nan(val):
     return val != val
 
+
+def less_than_ten(val):
+    if int(val) < 10:
+        return "0" + val
+    else:
+        return val
+
 ############################################
 # training_df & test_df                    #
 ############################################
@@ -48,8 +55,8 @@ test_df["Year"] = test_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m
 test_df["Month"] = test_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").month)
 
 # Create "YearMonth" column
-training_df["YearMonth"] = training_df["Date"].apply(lambda x: str(dt.datetime.strptime(x, "%Y-%m-%d").year) + "-" + str(dt.datetime.strptime(x, "%Y-%m-%d").month))
-test_df["YearMonth"] = test_df["Date"].apply(lambda x: str(dt.datetime.strptime(x, "%Y-%m-%d").year) + "-" + str(dt.datetime.strptime(x, "%Y-%m-%d").month))
+training_df["YearMonth"] = training_df["Date"].apply(lambda x: str(dt.datetime.strptime(x, "%Y-%m-%d").year) + "-" + less_than_ten(str(dt.datetime.strptime(x, "%Y-%m-%d").month)))
+test_df["YearMonth"] = test_df["Date"].apply(lambda x: str(dt.datetime.strptime(x, "%Y-%m-%d").year) + "-" + less_than_ten(str(dt.datetime.strptime(x, "%Y-%m-%d").month)))
 
 # "StateHoliday" has values "0" & 0
 training_df["StateHoliday"].loc[training_df["StateHoliday"] == 0] = "0"
