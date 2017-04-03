@@ -1,22 +1,26 @@
 ## List of Models
 
-- `linearregression.py`
+- `linearregression.py` (Independent Regression Models)
     - Private Score: 0.16939, Public Score: 0.14867
     - Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
-    - Each store is an independent regression problem.
-- `linearregression2.py`
+- `linearregression2.py` (Independent Regression Models)
     - Private Score: 0.16405, Public Score: 0.14499
     - Features: Promo, DayOfWeek(one-hot encoded)
-    - Each store is an independent regression problem.
-- `linearregression3.py`
+- `linearregression3.py` (Independent Regression Models)
     - Private Score: 0.16411, Public Score: 0.14511
     - Features: Promo, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
-    - Each store is an independent regression problem.
+- `linearregression4.py` (Single Regression Model)
+    - Private Score: 0.42820, Public Score: 0.42460
+    - Features: Store, Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), CompetitionDistance, StoreType (one-hot encoded), Assortment (one-hot encoded)
+- `linearregression5.py` (Single Regression Model)
+    - Private Score: 0.26838, Public Score: 0.26738
+    - Features: Store, Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), CompetitionDistance, StoreType (one-hot encoded), Assortment (one-hot encoded), AvgCustStore, AvgCustStoreMonth, AvgCustStoreYear
+- `linearregression6.py` (Independent Regression Models)
+    - Private Score: 0.16209, Public Score: 0.14587
+    - Features: Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), AvgCustStore, AvgCustStoreMonth
 - `simplemedian.py`
     - Private Score: 0.14598, Public Score: 0.14001
     - Features: Store, DayOfWeek, Promo
-    - This model simply calculates the median value for every ["Store", "DayOfWeek", "Promo"] combination and assigns that value as the prediction for every ["Store", "DayOfWeek", "Promo"] combination in the test data.
 - `simplegeometricmean.py`
     - Private Score: 0.15996, Public Score: 0.15390
     - Features: Store, DayOfWeek, Promo
-    - This model simply calculates the geometric mean value for every ["Store", "DayOfWeek", "Promo"] combination and assigns that value as the prediction for every ["Store", "DayOfWeek", "Promo"] combination in the test data.
