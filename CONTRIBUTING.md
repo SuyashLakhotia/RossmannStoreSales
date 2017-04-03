@@ -14,4 +14,4 @@ Private Score: XYZ, Public Score: XYZ
 """
 ```
 
-Submit a pull request to `master` once done.
+Submit a pull request to `master` once done. After merging with `master`, add details about the model to `List of Models.md`.
