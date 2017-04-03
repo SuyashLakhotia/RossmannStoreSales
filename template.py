@@ -17,9 +17,9 @@ training_df = pd.read_csv("data/train.csv")
 store_df = pd.read_csv("data/store.csv")
 test_df = pd.read_csv("data/test.csv")
 
-# print(training_df.info())
-# print(store_df.info())
-# print(test_df.info())
+# print(training_df.head())
+# print(store_df.head())
+# print(test_df.head())
 
 
 ################################################################
