@@ -157,7 +157,7 @@ for i in test_dict:
     Y_train = store["Sales"]
     X_test = test_dict[i].copy()
 
-    # X_tr, X_te, Y_tr, Y_te = train_test_split(X_train, Y_train, test_size=0.4, random_state=2)
+    # X_tr, X_te, Y_tr, Y_te = train_test_split(X_train, Y_train, test_size=0.4)
     # lreg = LinearRegression()
     # lreg.fit(X_tr, Y_tr)
     # Y_pr = lreg.predict(X_te)
