@@ -3,7 +3,6 @@ Private Score: 0.16405, Public Score: 0.14499
 """
 
 import datetime as dt
-from math import sqrt
 
 import pandas as pd
 from pandas import Series, DataFrame
