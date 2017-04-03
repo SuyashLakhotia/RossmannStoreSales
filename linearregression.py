@@ -1,5 +1,5 @@
 """
-Private Score: 0.16939, Public Score: 0.14867
+Private Score: 0.16940, Public Score: 0.14870
 """
 
 import datetime as dt
@@ -142,7 +142,7 @@ for i in test_dict:
     lreg.fit(X_train, Y_train)
     Y_pred = lreg.predict(X_test)
 
-    print(lreg.score(X_train, Y_train))
+    # print(lreg.score(X_train, Y_train))
 
     predictions = predictions.append(Series(Y_pred, index=store_ids))
 

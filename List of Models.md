@@ -1,7 +1,7 @@
 ## List of Models
 
 - `linearregression.py`
-    - Private Score: 0.16939, Public Score: 0.14867
+    - Private Score: 0.16940, Public Score: 0.14870
     - Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
     - Treating each store as an independent regression problem, loop through all stores training the model for the particular store and predicting its sales value.
 - `simplemedian.py`
