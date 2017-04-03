@@ -45,6 +45,16 @@ training_df["StateHoliday"].loc[training_df["StateHoliday"] == 0] = "0"
 training_df["StateHolidayBinary"] = training_df["StateHoliday"].map({0: 0, "0": 0, "a": 1, "b": 1, "c": 1})
 
 ############################################
+# training_df_open                         #
+############################################
+
+# Create DataFrame for only open days
+training_df_open = training_df[training_df["Open"] != 0]
+
+# Drop "Open" column
+training_df_open.drop(["Open"], axis=1, inplace=True)
+
+############################################
 # store_df                                 #
 ############################################
 
@@ -167,6 +177,16 @@ fig.clf()
 plt.close(fig)
 print("Plotted Avg. Sales & Customers (by State Holiday Binary)")
 
+Generate plots for Avg. Sales & Customers(by State Holiday Binary for Open Stores)
+fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 8))
+sns.barplot(x="StateHolidayBinary", y="Sales", data=training_df_open, ax=axis1)
+sns.barplot(x="StateHolidayBinary", y="Customers", data=training_df_open, ax=axis2)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales & Customers (by State Holiday Binary for Open Stores).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales & Customers (by State Holiday Binary for Open Stores)")
+
 # Generate plots for Avg. Sales & Customers (by State Holiday)
 fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 8))
 sns.barplot(x="StateHoliday", y="Sales", data=training_df, ax=axis1)
@@ -177,6 +197,17 @@ fig.savefig("plots/Avg. Sales & Customers (by State Holiday).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 print("Plotted Avg. Sales & Customers (by State Holiday)")
+
+Generate plots for Avg. Sales & Customers(by State Holiday for Open Stores)
+fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 8))
+sns.barplot(x="StateHoliday", y="Sales", data=training_df_open, ax=axis1)
+mask = (training_df_open["StateHoliday"] != "0") & (training_df_open["Sales"] > 0)
+sns.barplot(x="StateHoliday", y="Sales", data=training_df_open[mask], ax=axis2)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales & Customers (by State Holiday for Open Stores).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales & Customers (by State Holiday for Open Stores)")
 
 
 ############################################
@@ -202,6 +233,16 @@ fig.clf()
 plt.close(fig)
 print("Plotted Avg. Sales & Customers (by School Holiday)")
 
+Generate plots for Avg. Sales & Customers(by School Holiday for Open Stores)
+fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 8))
+sns.barplot(x="SchoolHoliday", y="Sales", data=training_df_open, ax=axis1)
+sns.barplot(x="SchoolHoliday", y="Customers", data=training_df_open, ax=axis2)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales & Customers (by School Holiday for Open Stores).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales & Customers (by School Holiday for Open Stores)")
+
 
 ############################################
 # "Sales" Data Field                       #
@@ -216,6 +257,15 @@ fig.clf()
 plt.close(fig)
 print("Plotted Frequency of Sales Values")
 
+Generate plot for Frequency of Sales Values(for Open Stores)
+fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
+training_df_open["Sales"].plot(kind="hist", bins=70, xlim=(0, 20000), ax=axis1)
+fig.tight_layout()
+fig.savefig("plots/Frequency of Sales Values (for Open Stores).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Frequency of Sales Values (for Open Stores)")
+
 
 ############################################
 # "Customers" Data Field                   #
@@ -223,12 +273,21 @@ print("Plotted Frequency of Sales Values")
 
 # Generate plot for Frequency of Customers Values
 fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
-training_df["Sales"].plot(kind="hist", bins=70, xlim=(0, 9000), ax=axis1)
+training_df["Customers"].plot(kind="hist", bins=70, xlim=(0, 4000), ax=axis1)
 fig.tight_layout()
 fig.savefig("plots/Frequency of Customers Values.png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 print("Plotted Frequency of Customers Values")
+
+# Generate plot for Frequency of Customers Values (for Open Stores)
+fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
+training_df_open["Customers"].plot(kind="hist", bins=70, xlim=(0, 4000), ax=axis1)
+fig.tight_layout()
+fig.savefig("plots/Frequency of Customers Values (for Open Stores).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Frequency of Customers Values (for Open Stores)")
 
 
 ############################################
