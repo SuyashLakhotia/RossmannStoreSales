@@ -8,6 +8,10 @@
     - Private Score: 0.16405, Public Score: 0.14499
     - Features: Promo, DayOfWeek(one-hot encoded)
     - Each store is an independent regression problem.
+- `linearregression3.py`
+    - Private Score: 0.16411, Public Score: 0.14511
+    - Features: Promo, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
+    - Each store is an independent regression problem.
 - `simplemedian.py`
     - Private Score: 0.14598, Public Score: 0.14001
     - Features: Store, DayOfWeek, Promo
