@@ -402,21 +402,39 @@ plt.close(fig)
 print("Plotted Effect of Competition")
 
 
-############################################
-# Correlation                              #
-############################################
+###########################################
+# Correlation of Features in training_df  #
+###########################################
 
 # One-hot encoding of "DayOfWeek" & "StateHoliday" columns
 training_df = pd.get_dummies(training_df, columns=["DayOfWeek", "StateHoliday"])
 
-# Generate Correlation Matrix for training_df
+# Generate correlation matrix for training_df
 corr = training_df.corr()
 fig, (axis1) = plt.subplots(figsize=(15, 15))
 sns.heatmap(corr, square=True, ax=axis1)
 plt.yticks(rotation=0)
 plt.xticks(rotation=90)
 fig.tight_layout()
-fig.savefig("plots/Correlation Matrix.png")
+fig.savefig("plots/Correlation Matrix (training_df).png")
 fig.clf()
 plt.close(fig)
-print("Plotted Correlation Matrix")
+print("Plotted Correlation Matrix (training_df)")
+
+############################################
+# Correlation of Stores                    #
+############################################
+
+# Generate table for 1,115 stores and their total sales every month
+store_piv = pd.pivot_table(training_df, values="Sales", index="YearMonth", columns=["Store"], aggfunc="sum")
+
+# Generate correlation matrix for stores
+start_store = 1
+end_store = 1115
+fig, (axis1) = plt.subplots(1, 1, figsize=(100, 100))
+sns.heatmap(store_piv[list(range(start_store, end_store + 1))].corr(), square=True, ax=axis1)
+fig.tight_layout()
+fig.savefig("plots/Correlation Matrix (Stores).png")
+fig.clf()
+plt.close(fig)
+print("Plotted Correlation Matrix (Stores)")
