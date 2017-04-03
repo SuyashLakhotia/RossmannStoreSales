@@ -24,3 +24,6 @@
 - `simplegeometricmean.py`
     - Private Score: 0.15996, Public Score: 0.15390
     - Features: Store, DayOfWeek, Promo
+- `xgboostregressor.py`
+    - Private Score: 0.16360, Public Score: 0.14958
+    - Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
