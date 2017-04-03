@@ -88,6 +88,19 @@ store_df = pd.get_dummies(store_df, columns=["StoreType", "Assortment"])
 
 # Any custom data processing goes here.
 
+
+################################################################
+# RMSPE Function                                               #
+################################################################
+
+def rmspe(y_true, y_pred):
+    diff = y_pred - y_true
+    diff_percentage = diff / y_true
+    diff_percentage_squared = diff_percentage ** 2
+    rmspe = np.sqrt(diff_percentage_squared.mean())
+    return rmspe
+
+
 ################################################################
 # Training the Model & Predicting Sales                        #
 ################################################################
