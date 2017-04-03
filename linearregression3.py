@@ -10,6 +10,7 @@ from pandas import Series, DataFrame
 import numpy as np
 
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 
 pd.options.mode.chained_assignment = None
 
@@ -116,6 +117,18 @@ test_df.drop(["Open", "SchoolHoliday"], axis=1, inplace=True)
 
 
 ################################################################
+# RMSPE Function                                               #
+################################################################
+
+def rmspe(y_true, y_pred):
+    diff = y_pred - y_true
+    diff_percentage = diff / y_true
+    diff_percentage_squared = diff_percentage ** 2
+    rmspe = np.sqrt(diff_percentage_squared.mean())
+    return rmspe
+
+
+################################################################
 # Training the Model & Predicting Sales                        #
 ################################################################
 
@@ -144,6 +157,12 @@ for i in test_dict:
     X_train = store.drop(["Sales", "Store"], axis=1)
     Y_train = store["Sales"]
     X_test = test_dict[i].copy()
+
+    # X_tr, X_te, Y_tr, Y_te = train_test_split(X_train, Y_train, test_size=0.4, random_state=2)
+    # lreg = LinearRegression()
+    # lreg.fit(X_tr, Y_tr)
+    # Y_pr = lreg.predict(X_te)
+    # print(rmspe(y_true=Y_te, y_pred=Y_pr))
 
     store_ids = X_test["Id"]
     X_test.drop(["Id", "Store"], axis=1, inplace=True)
