@@ -140,6 +140,8 @@ for i in test_dict:
     lreg.fit(X_train, Y_train)
     Y_pred = lreg.predict(X_test)
 
+    print(lreg.score(X_train, Y_train))
+
     predictions = predictions.append(Series(Y_pred, index=store_ids))
 
 predictions = predictions.append(Series(0, index=closed_store_ids))
