@@ -33,7 +33,7 @@ def is_nan(val):
 # training_df & test_df                    #
 ############################################
 
-# Fill NaN values in test_df with Open = 1 if DayOfWeek != 7
+# Fill NaN values in test_df with "Open" = 1 if "DayOfWeek" != 7
 test_df["Open"][is_nan(test_df["Open"])] = (test_df["DayOfWeek"] != 7).astype(int)
 
 # Create "Year" & "Month" columns
@@ -63,8 +63,12 @@ test_df = pd.get_dummies(test_df, columns=["DayOfWeek", "StateHoliday"])
 # store_df                                 #
 ############################################
 
-# Fill NaN values in store_df for "CompetitionDistance" with the median value
-store_df["CompetitionDistance"].fillna(store_df["CompetitionDistance"].median())
+# Fill NaN values in store_df for "CompetitionDistance" = 0 (since no record exists where "CD" = NaN & "COS[Y/M]" = !NaN)
+store_df["CompetitionDistance"][is_nan(store_df["CompetitionDistance"])] = 0
+
+# Fill NaN values in store_df for "CompetitionSince[X]" with 1900-01
+store_df["CompetitionOpenSinceYear"][(store_df["CompetitionDistance"] != 0) & (is_nan(store_df["CompetitionOpenSinceYear"]))] = 1900
+store_df["CompetitionOpenSinceMonth"][(store_df["CompetitionDistance"] != 0) & (is_nan(store_df["CompetitionOpenSinceMonth"]))] = 1
 
 # One-hot encoding of "StoreType" & "Assortment" columns
 store_df = pd.get_dummies(store_df, columns=["StoreType", "Assortment"])
