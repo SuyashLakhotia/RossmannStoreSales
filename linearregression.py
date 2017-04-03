@@ -1,5 +1,5 @@
 """
-Private Score: 0.16941, Public Score: 0.14870
+Private Score: 0.16939, Public Score: 0.14867
 """
 
 import pandas as pd
@@ -16,12 +16,12 @@ pd.options.mode.chained_assignment = None
 # Import CSV Data into Pandas DataFrames                       #
 ################################################################
 training_df = pd.read_csv("data/train.csv")
-store_df = pd.read_csv("data/store.csv")
+# store_df = pd.read_csv("data/store.csv")
 test_df = pd.read_csv("data/test.csv")
 
-# print(training_df.info())
-# print(store_df.info())
-# print(test_df.info())
+# print(training_df.head())
+# print(store_df.head())
+# print(test_df.head())
 
 
 ################################################################
@@ -54,8 +54,8 @@ training_df["StateHoliday"].loc[training_df["StateHoliday"] == 0] = "0"
 test_df["StateHoliday"].loc[test_df["StateHoliday"] == 0] = "0"
 
 # Create "StateHolidayBinary" column
-training_df["StateHolidayBinary"] = training_df["StateHoliday"].map({0: 0, "0": 0, "a": 1, "b": 1, "c": 1})
-test_df["StateHolidayBinary"] = test_df["StateHoliday"].map({0: 0, "0": 0, "a": 1, "b": 1, "c": 1})
+# training_df["StateHolidayBinary"] = training_df["StateHoliday"].map({0: 0, "0": 0, "a": 1, "b": 1, "c": 1})
+# test_df["StateHolidayBinary"] = test_df["StateHoliday"].map({0: 0, "0": 0, "a": 1, "b": 1, "c": 1})
 
 # One-hot encoding of "DayOfWeek" & "StateHoliday" columns
 training_df = pd.get_dummies(training_df, columns=["DayOfWeek", "StateHoliday"])
@@ -66,10 +66,10 @@ test_df = pd.get_dummies(test_df, columns=["DayOfWeek", "StateHoliday"])
 ############################################
 
 # Fill NaN values in store_df for "CompetitionDistance" with the median value
-store_df["CompetitionDistance"].fillna(store_df["CompetitionDistance"].median())
+# store_df["CompetitionDistance"].fillna(store_df["CompetitionDistance"].median())
 
 # One-hot encoding of "StoreType" & "Assortment" columns
-store_df = pd.get_dummies(store_df, columns=["StoreType", "Assortment"])
+# store_df = pd.get_dummies(store_df, columns=["StoreType", "Assortment"])
 
 
 ################################################################
@@ -81,8 +81,8 @@ training_df.drop(["Year", "Month", "Date", "YearMonth"], axis=1, inplace=True)
 test_df.drop(["Year", "Month", "Date", "YearMonth"], axis=1, inplace=True)
 
 # Drop "StateHolidayBinary" as "StateHoliday_[X]" Exists
-training_df.drop(["StateHolidayBinary"], axis=1, inplace=True)
-test_df.drop(["StateHolidayBinary"], axis=1, inplace=True)
+# training_df.drop(["StateHolidayBinary"], axis=1, inplace=True)
+# test_df.drop(["StateHolidayBinary"], axis=1, inplace=True)
 
 # Remove all Closed Stores ("Sales" = 0)
 training_df = training_df[training_df["Open"] != 0]
@@ -103,8 +103,7 @@ test_df.drop(["Open"], axis=1, inplace=True)
 ################################################################
 
 """
-Treating each store as an independent regression problem, loop through all stores training the model for
-the particular store and predicting its sales value.
+Treating each store as an independent regression problem, loop through all stores training the model for the particular store and predicting its sales value.
 
 Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
 
