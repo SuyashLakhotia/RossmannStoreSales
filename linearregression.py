@@ -2,10 +2,12 @@
 Private Score: 0.16939, Public Score: 0.14867
 """
 
+import datetime as dt
+from math import sqrt
+
 import pandas as pd
 from pandas import Series, DataFrame
 import numpy as np
-import datetime as dt
 
 from sklearn.linear_model import LinearRegression
 

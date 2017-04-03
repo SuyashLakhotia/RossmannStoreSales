@@ -2,10 +2,11 @@
 Private Score: XYZ, Public Score: XYZ
 """
 
+import datetime as dt
+
 import pandas as pd
 from pandas import Series, DataFrame
 import numpy as np
-import datetime as dt
 
 pd.options.mode.chained_assignment = None
 
