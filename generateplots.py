@@ -13,11 +13,9 @@ pd.options.mode.chained_assignment = None
 ################################################################
 training_df = pd.read_csv("data/train.csv")
 store_df = pd.read_csv("data/store.csv")
-test_df = pd.read_csv("data/test.csv")
 
 # print(training_df.info())
 # print(store_df.info())
-# print(test_df.info())
 
 
 ################################################################
@@ -63,8 +61,8 @@ avg_sales_customers = training_df.groupby("Store")[["Sales", "Customers"]].mean(
 avg_sales_customers_df = DataFrame({"Store": avg_sales_customers.index, "AvgSales": avg_sales_customers["Sales"], "AvgCustomers": avg_sales_customers["Customers"]}, columns=["Store", "AvgSales", "AvgCustomers"])
 store_df = pd.merge(avg_sales_customers_df, store_df, on="Store")
 
-# Fill NaN values in store_df for "CompetitionDistance" with the median value
-store_df["CompetitionDistance"].fillna(store_df["CompetitionDistance"].median())
+# Fill NaN values in store_df for "CompetitionDistance" = 0 (since no record exists where "CD" = NaN & "COS[Y/M]" = !NaN)
+store_df["CompetitionDistance"][is_nan(store_df["CompetitionDistance"])] = 0
 
 
 ################################################################
