@@ -1,5 +1,5 @@
 """
-Private Score: XYZ, Public Score: XYZ
+Private Score: 0.15996, Public Score: 0.15390
 """
 
 import datetime as dt

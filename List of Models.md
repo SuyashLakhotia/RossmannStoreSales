@@ -16,3 +16,7 @@
     - Private Score: 0.14598, Public Score: 0.14001
     - Features: Store, DayOfWeek, Promo
     - This model simply calculates the median value for every ["Store", "DayOfWeek", "Promo"] combination and assigns that value as the prediction for every ["Store", "DayOfWeek", "Promo"] combination in the test data.
+- `simplegeometricmean.py`
+    - Private Score: 0.15996, Public Score: 0.15390
+    - Features: Store, DayOfWeek, Promo
+    - This model simply calculates the geometric mean value for every ["Store", "DayOfWeek", "Promo"] combination and assigns that value as the prediction for every ["Store", "DayOfWeek", "Promo"] combination in the test data.
