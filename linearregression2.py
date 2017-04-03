@@ -48,15 +48,15 @@ def less_than_ten(val):
 test_df["Open"][is_nan(test_df["Open"])] = (test_df["DayOfWeek"] != 7).astype(int)
 
 # Create "Year" & "Month" columns
-training_df["Year"] = training_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").year)
-training_df["Month"] = training_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").month)
+# training_df["Year"] = training_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").year)
+# training_df["Month"] = training_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").month)
 
-test_df["Year"] = test_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").year)
-test_df["Month"] = test_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").month)
+# test_df["Year"] = test_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").year)
+# test_df["Month"] = test_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").month)
 
 # Create "YearMonth" column
-training_df["YearMonth"] = training_df["Date"].apply(lambda x: str(dt.datetime.strptime(x, "%Y-%m-%d").year) + "-" + less_than_ten(str(dt.datetime.strptime(x, "%Y-%m-%d").month)))
-test_df["YearMonth"] = test_df["Date"].apply(lambda x: str(dt.datetime.strptime(x, "%Y-%m-%d").year) + "-" + less_than_ten(str(dt.datetime.strptime(x, "%Y-%m-%d").month)))
+# training_df["YearMonth"] = training_df["Date"].apply(lambda x: str(dt.datetime.strptime(x, "%Y-%m-%d").year) + "-" + less_than_ten(str(dt.datetime.strptime(x, "%Y-%m-%d").month)))
+# test_df["YearMonth"] = test_df["Date"].apply(lambda x: str(dt.datetime.strptime(x, "%Y-%m-%d").year) + "-" + less_than_ten(str(dt.datetime.strptime(x, "%Y-%m-%d").month)))
 
 # "StateHoliday" has values "0" & 0
 training_df["StateHoliday"].loc[training_df["StateHoliday"] == 0] = "0"
@@ -89,9 +89,13 @@ test_df = pd.get_dummies(test_df, columns=["DayOfWeek"])
 # Process Data (Custom)                                        #
 ################################################################
 
-# Drop "Year" & "Month" as test_df only has "Year" = 2015 & "Month" = 8 || 9
-training_df.drop(["Year", "Month", "Date", "YearMonth"], axis=1, inplace=True)
-test_df.drop(["Year", "Month", "Date", "YearMonth"], axis=1, inplace=True)
+# Drop "Date" column
+training_df.drop(["Date"], axis=1, inplace=True)
+test_df.drop(["Date"], axis=1, inplace=True)
+
+# Drop "Year", "Month" & "YearMonth" as test_df only has "Year" = 2015 & "Month" = 8 || 9
+# training_df.drop(["Year", "Month", "YearMonth"], axis=1, inplace=True)
+# test_df.drop(["Year", "Month", "YearMonth"], axis=1, inplace=True)
 
 # Drop "StateHolidayBinary" as "StateHoliday_[X]" Exists
 # training_df.drop(["StateHolidayBinary"], axis=1, inplace=True)
