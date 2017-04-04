@@ -199,6 +199,6 @@ for i in test_dict:
 predictions = predictions.append(Series(0, index=closed_store_ids))
 
 submission = pd.DataFrame({"Id": predictions.index, "Sales": predictions.values})
-submission.to_csv("predictions/linearregression7.csv", index=False)
+submission.to_csv("predictions/linearregression-independent-log.csv", index=False)
 
 print("Predictions saved.")
