@@ -20,9 +20,9 @@ pd.options.mode.chained_assignment = None
 ################################################################
 # Import CSV Data into Pandas DataFrames                       #
 ################################################################
-train_df = pd.read_csv("data/train.csv",dtype={'StateHoliday':pd.np.string_})
+train_df = pd.read_csv("data/train.csv", dtype={'StateHoliday': pd.np.string_})
 store_df = pd.read_csv("data/store.csv")
-testing_df = pd.read_csv("data/test.csv",dtype={'StateHoliday':pd.np.string_})
+testing_df = pd.read_csv("data/test.csv", dtype={'StateHoliday': pd.np.string_})
 
 training_df = pd.merge(train_df, store_df, on='Store', how='left')
 test_df = pd.merge(testing_df, store_df, on='Store', how='left')
@@ -30,6 +30,7 @@ test_df = pd.merge(testing_df, store_df, on='Store', how='left')
 # print(training_df.head())
 # print(store_df.head())
 # print(test_df.head())
+
 
 ################################################################
 # Process Data (Universal)                                     #
@@ -108,15 +109,16 @@ test_df = test_df.fillna(0)
 
 training_df = training_df[training_df["Open"] == 1]
 
-features = ['Store','DayOfWeek','Year','Month','Day','Open','Promo','StateHoliday','SchoolHoliday', 'StoreType','Assortment','CompetitionDistance','Promo2']
+features = ['Store', 'DayOfWeek', 'Year', 'Month', 'Day', 'Open', 'Promo', 'StateHoliday', 'SchoolHoliday', 'StoreType', 'Assortment', 'CompetitionDistance', 'Promo2']
 
-print ("Preprocessing by label encoding.")
+print("Preprocessing by label encoding.")
 for f in training_df[features]:
-    if training_df[f].dtype=='object':
+    if training_df[f].dtype == 'object':
         labels = LabelEncoder()
         labels.fit(list(training_df[f].values) + list(test_df[f].values))
         training_df[f] = labels.transform(list(training_df[f].values))
         test_df[f] = labels.transform(list(test_df[f].values))
+
 
 ################################################################
 # RMSPE Function                                               #
@@ -137,37 +139,37 @@ def rmspe(y_true, y_pred):
 """
 Treating each store as an independent regression problem, loop through all stores training the model for the particular store and predicting its sales value.
 
-Features: 'Store','DayOfWeek','Year','Month','Day','Open','Promo','StateHoliday','SchoolHoliday', 'StoreType','Assortment','CompetitionDistance','Promo2'
+Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
 
 """
 
 print("Making predictions...")
-    
-## Uncomment to train
+
+# Uncomment to train
 
 regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
-                   learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
 regressor.fit(np.array(training_df[features]), training_df["Sales"])
 
 with open('models/xgboostregressor2.pkl', 'wb') as fid:
-    pickle.dump(regressor, fid) 
+    pickle.dump(regressor, fid)
 
-print ("Model saved to models/xgboostregressor2.pkl")
+print("Model saved to models/xgboostregressor2.pkl")
 
 # with open('models/xgboostregressor2.pkl', 'rb') as fid:
-#     regressor = pickle.load(fid) 
+#     regressor = pickle.load(fid)
 
 predictions = []
 for i in test_df['Id'].tolist():
     if test_df[test_df['Id'] == i]['Open'].item() == 0:
-        predictions += [[i,0]]
+        predictions += [[i, 0]]
     else:
-        prediction = regressor.predict(np.array(test_df[test_df['Id']==i][features]))[0]
+        prediction = regressor.predict(np.array(test_df[test_df['Id'] == i][features]))[0]
         predictions += [[i, prediction]]
 
 with open('predictions/xgboostregressor2.csv', 'w') as f:
     csv_writer = csv.writer(f, lineterminator='\n')
-    csv_writer.writerow(["Id","Sales"])
+    csv_writer.writerow(["Id", "Sales"])
     csv_writer.writerows(predictions)
 
 print("Predictions saved.")
