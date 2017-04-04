@@ -1,32 +1,32 @@
 ## List of Models
 
-- `linearregression.py` (Independent Regression Models)
+- `linearregression-independent.py` (Independent Regression Models)
     - Private Score: 0.16939, Public Score: 0.14867
     - Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
-- `linearregression2.py` (Independent Regression Models)
+- `linearregression-independent2.py` (Independent Regression Models)
     - Private Score: 0.16405, Public Score: 0.14499
     - Features: Promo, DayOfWeek(one-hot encoded)
-- `linearregression3.py` (Independent Regression Models)
+- `linearregression-independent3.py` (Independent Regression Models)
     - Private Score: 0.16411, Public Score: 0.14511
     - Features: Promo, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
-- `linearregression4.py` (Single Regression Model)
-    - Private Score: 0.42820, Public Score: 0.42460
-    - Features: Store, Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), CompetitionDistance, StoreType (one-hot encoded), Assortment (one-hot encoded)
-- `linearregression5.py` (Single Regression Model)
-    - Private Score: 0.26838, Public Score: 0.26738
-    - Features: Store, Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), CompetitionDistance, StoreType (one-hot encoded), Assortment (one-hot encoded), AvgCustStore, AvgCustStoreMonth, AvgCustStoreYear
-- `linearregression6.py` (Independent Regression Models)
+- `linearregression-independent4.py` (Independent Regression Models)
     - Private Score: 0.16209, Public Score: 0.14587
     - Features: Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), AvgCustStore, AvgCustStoreMonth
-- `simplemedian.py`
-    - Private Score: 0.14598, Public Score: 0.14001
-    - Features: Store, DayOfWeek, Promo
-- `simplegeometricmean.py`
-    - Private Score: 0.15996, Public Score: 0.15390
-    - Features: Store, DayOfWeek, Promo
+- `linearregression-single.py` (Single Regression Model)
+    - Private Score: 0.42820, Public Score: 0.42460
+    - Features: Store, Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), CompetitionDistance, StoreType (one-hot encoded), Assortment (one-hot encoded)
+- `linearregression-single2.py` (Single Regression Model)
+    - Private Score: 0.26838, Public Score: 0.26738
+    - Features: Store, Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), CompetitionDistance, StoreType (one-hot encoded), Assortment (one-hot encoded), AvgCustStore, AvgCustStoreMonth, AvgCustStoreYear
 - `xgboostregressor.py`
     - Private Score: 0.16360, Public Score: 0.14958
     - Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
 - `xgboostregressor2.py`
     - Private Score: 0.13205, Public Score: 0.11356
     - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
+- `simplemedian.py`
+    - Private Score: 0.14598, Public Score: 0.14001
+    - Features: Store, DayOfWeek, Promo
+- `simplegeometricmean.py`
+    - Private Score: 0.15996, Public Score: 0.15390
+    - Features: Store, DayOfWeek, Promo
