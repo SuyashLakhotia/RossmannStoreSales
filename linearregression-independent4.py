@@ -155,6 +155,7 @@ Treating each store as an independent regression problem, loop through all store
 Features: Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), AvgCustStore, AvgCustStoreMonth
 
 Assumptions:
+- Stores not in the test data will not affect the performance for stores in the test data.
 - The store's opening/closing dates does not affect the store's performance. For example, a store that was closed yesterday will not get more sales today because of that.
 - The competition of each store will affect it consistently, hence, it does not matter.
 - Each store's sales value is independent of the other stores and can be treated as independent regression problems.
@@ -195,4 +196,4 @@ predictions = predictions.append(Series(0, index=closed_store_ids))
 submission = pd.DataFrame({"Id": predictions.index, "Sales": predictions.values})
 submission.to_csv("predictions/linearregression6.csv", index=False)
 
-print("Predictions saved.")
+# print("Predictions saved.")
