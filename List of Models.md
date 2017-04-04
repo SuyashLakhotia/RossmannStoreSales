@@ -27,3 +27,6 @@
 - `xgboostregressor.py`
     - Private Score: 0.16360, Public Score: 0.14958
     - Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
+- `xgboostregressor2.py`
+    - Private Score: 0.13205, Public Score: 0.11356
+    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
