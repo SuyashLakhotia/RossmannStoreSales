@@ -12,6 +12,9 @@
 - `linearregression-independent4.py` (Independent Regression Models)
     - Private Score: 0.16209, Public Score: 0.14587
     - Features: Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), AvgCustStore, AvgCustStoreMonth
+- `linearregression-independent-log.py` (Independent Regression Models)
+    - Private Score: 0.15522, Public Score: 0.13742
+    - Features: Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), AvgCustStore, AvgCustStoreMonth
 - `linearregression-single.py` (Single Regression Model)
     - Private Score: 0.42820, Public Score: 0.42460
     - Features: Store, Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), CompetitionDistance, StoreType (one-hot encoded), Assortment (one-hot encoded)
