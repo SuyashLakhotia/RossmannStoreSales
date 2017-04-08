@@ -27,6 +27,9 @@
 - `xgboostregressor2.py`
     - Private Score: 0.13205, Public Score: 0.11356
     - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
+- `xgboostregressor-log.py`
+    - Private Score: 0.12728, Public Score: 0.10754
+    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
 - `simplemedian.py`
     - Private Score: 0.14598, Public Score: 0.14001
     - Features: Store, DayOfWeek, Promo
