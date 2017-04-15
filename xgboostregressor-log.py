@@ -9,9 +9,9 @@ import csv
 import pandas as pd
 from pandas import Series, DataFrame
 import numpy as np
+import matplotlib.pyplot as plt
 
-from xgboost import XGBRegressor
-from sklearn.model_selection import train_test_split
+from xgboost import XGBRegressor, plot_importance
 from sklearn.preprocessing import LabelEncoder
 
 pd.options.mode.chained_assignment = None
@@ -144,11 +144,11 @@ A XGB regression model for all stores. Uses log based standardization for the "S
 Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
 """
 
-print("Making predictions...")
+print("Training...")
 
 # Uncomment to train
-regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
-                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+# regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
+#                          learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
 # regressor.fit(np.array(training_df[features]), training_df["Sales"])
 
 # with open("models/xgboostregressor-log.pkl", "wb") as fid:
@@ -158,6 +158,8 @@ regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
 
 with open("models/xgboostregressor-log.pkl", "rb") as fid:
     regressor = pickle.load(fid)
+
+print("Making Predictions...")
 
 predictions = []
 for i in test_df["Id"].tolist():
@@ -173,3 +175,9 @@ with open("predictions/xgboostregressor-log.csv", "w") as f:
     csv_writer.writerows(predictions)
 
 print("Predictions saved.")
+
+# Show Feature Importance
+# mapper = {'f{0}'.format(i): v for i, v in enumerate(features)}
+# mapped = {mapper[k]: v for k, v in regressor.booster().get_score(importance_type='weight').items()}
+# plot_importance(mapped)
+# plt.show()

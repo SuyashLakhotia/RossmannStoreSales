@@ -39,6 +39,24 @@
 - `xgboostregressor4.py`
     - Private Score: 0.12511, Public Score: 0.11315
     - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2, AvgCustStore, AvgCustStoreMonth
+- `xgboostregressor5.py`
+    - Private Score: 0.12708, Public Score: 0.11219
+    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, SchoolHoliday, CompetitionDistance, Promo2, WeekOfYear, CompetitionOpen, PromoOpen, IsPromoMonth, StoreType, Assortment, StateHoliday
+- `xgboostregressor6.py`
+    - Private Score: 0.12305, Public Score: 0.11276
+    - Features: Store, Day, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenInt, SalesPerDay, CustomersPerDay, SalesPerCustomersPerDay
+- `xgb.py`
+    - Private Score: 0.15591, Public Score: 0.17379
+    - Features: Store, Day, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenInt, SalesPerDay, CustomersPerDay, SalesPerCustomersPerDay
+- `xgboostensembler.py`
+    - Private Score: 0.12015, Public Score: 0.10561
+    - Models: xgboostregressor6, xgboostregressor-log
+- `xgboostensembler1.py`
+    - Private Score: 0.11919, Public Score: 0.10514
+    - Models: xgboostregressor6, xgboostregressor-log
+- `xgboostensembler2.py`
+    - Private Score: 0.11904, Public Score: 0.10527
+    - Models: xgboostregressor6, xgboostregressor-log
 - `simplemedian.py`
     - Private Score: 0.14598, Public Score: 0.14001
     - Features: Store, DayOfWeek, Promo
