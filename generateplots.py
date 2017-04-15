@@ -36,9 +36,10 @@ def less_than_ten(val):
 # training_df                              #
 ############################################
 
-# Create "Year" & "Month" columns
+# Create "Year", "Month" & "DayOfMonth" columns
 training_df["Year"] = training_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").year)
 training_df["Month"] = training_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").month)
+training_df["DayOfMonth"] = training_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").day)
 
 # Create "YearMonth" column
 training_df["YearMonth"] = training_df["Date"].apply(lambda x: str(dt.datetime.strptime(x, "%Y-%m-%d").year) + "-" + less_than_ten(str(dt.datetime.strptime(x, "%Y-%m-%d").month)))
@@ -127,6 +128,15 @@ fig.savefig("plots/Avg. Sales & Customers (by Month).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 print("Plotted Avg. Sales & Customers (by Month)")
+
+fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 8))
+sns.barplot(x="DayOfMonth", y="Sales", data=training_df, ax=axis1, ci=None)
+sns.barplot(x="DayOfMonth", y="Customers", data=training_df, ax=axis2, ci=None)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales & Customers (by Day Of Month).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales & Customers (by Day Of Month)")
 
 
 ############################################
@@ -523,29 +533,5 @@ fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
 sns.barplot(x="StoreType", y="AvgSalesPerCustomerForOpenDays", order=["a", "b", "c", "d"], data=merged_df, ax=axis1, ci=None)
 fig.tight_layout()
 fig.savefig("plots/Avg. Sales per Customer for Open Days (by Store Type).png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-
-############################################
-# Sales vs DayOfMonth                      #
-############################################
-
-fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-training_df["DayOfMonth"] = training_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").day)
-sns.barplot(x="DayOfMonth", y="Sales", order=range(1,32), data=training_df, ax=axis1, ci=None)
-fig.tight_layout()
-fig.savefig("plots/Sales (by DayOfMonth).png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-
-############################################
-# Customers vs DayOfMonth                  #
-############################################
-
-fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-training_df["DayOfMonth"] = training_df["Date"].apply(lambda x: dt.datetime.strptime(x, "%Y-%m-%d").day)
-sns.barplot(x="DayOfMonth", y="Customers", order=range(1,32), data=training_df, ax=axis1, ci=None)
-fig.tight_layout()
-fig.savefig("plots/Customers (by DayOfMonth).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
