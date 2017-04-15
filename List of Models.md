@@ -21,6 +21,9 @@
 - `linearregression-single2.py` (Single Regression Model)
     - Private Score: 0.26838, Public Score: 0.26738
     - Features: Store, Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), CompetitionDistance, StoreType (one-hot encoded), Assortment (one-hot encoded), AvgCustStore, AvgCustStoreMonth, AvgCustStoreYear
+- `ridgeregression.py` (Ridge Regression Model)
+    - Private Score: 0.16179, Public Score: 0.14526
+    - Features: Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), AvgCustStore, AvgCustStoreMonth
 - `xgboostregressor.py`
     - Private Score: 0.16360, Public Score: 0.14958
     - Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
