@@ -466,3 +466,62 @@ fig.savefig("plots/Correlation Matrix (Stores 1 - 100).png")
 fig.clf()
 plt.close(fig)
 print("Plotted Correlation Matrix (Stores 1 - 100)")
+
+############################################
+# Sales Trends On a Per Day Basis          #
+############################################
+
+store_data_sales = training_df.groupby([training_df['Store']])['Sales'].sum()
+store_data_customers = training_df.groupby([training_df['Store']])['Customers'].sum()
+store_data_open = training_df.groupby([training_df['Store']])['Open'].count()
+
+store_data_sales_per_day = store_data_sales / store_data_open
+store_data_customers_per_day = store_data_customers / store_data_open
+store_data_sales_per_customer_per_day = store_data_sales_per_day /store_data_customers_per_day
+
+store_df = pd.merge(store_df, store_data_sales_per_day.reset_index(name='SalesPerDay'), how='left', on=['Store'])
+store_df = pd.merge(store_df, store_data_customers_per_day.reset_index(name='CustomersPerDay'), how='left', on=['Store'])
+store_df = pd.merge(store_df, store_data_sales_per_customer_per_day.reset_index(name='SalesPerCustomersPerDay'), how='left', on=['Store'])
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="Store", y="SalesPerDay", data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/SalesPerDay (by Store).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="Store", y="CustomersPerDay", data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/CustomersPerDay (by Store).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="Store", y="SalesPerCustomersPerDay", data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/SalesPerCustomersPerDay (by Store).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="StoreType", y="SalesPerDay", order=["a", "b", "c", "d"], data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/SalesPerDay (by StoreType).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="StoreType", y="CustomersPerDay", order=["a", "b", "c", "d"], data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/CustomersPerDay (by StoreType).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="StoreType", y="SalesPerCustomersPerDay", order=["a", "b", "c", "d"], data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/SalesPerCustomersPerDay (by StoreType).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
