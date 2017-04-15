@@ -347,14 +347,14 @@ print("Plotted Avg. Sales & Customers (by Assortment)")
 # "Promo2" Data Field                      #
 ############################################
 
-# # Generate plot for No. Of Stores (by Promo2)
-# fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
-# sns.countplot(x="Promo2", data=store_df)
-# fig.tight_layout()
-# fig.savefig("plots/No. Of Stores (by Promo2).png", dpi=fig.dpi)
-# fig.clf()
-# plt.close(fig)
-# print("Plotted No. Of Stores (by Promo2)")
+# Generate plot for No. Of Stores (by Promo2)
+fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
+sns.countplot(x="Promo2", data=store_df)
+fig.tight_layout()
+fig.savefig("plots/No. Of Stores (by Promo2).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted No. Of Stores (by Promo2)")
 
 # # Generate plot for Avg. Sales & Customers (by Promo2)
 # fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 8))
@@ -467,61 +467,61 @@ fig.clf()
 plt.close(fig)
 print("Plotted Correlation Matrix (Stores 1 - 100)")
 
+
 ############################################
 # Sales Trends On a Per Day Basis          #
 ############################################
 
-store_data_sales = training_df.groupby([training_df['Store']])['Sales'].sum()
-store_data_customers = training_df.groupby([training_df['Store']])['Customers'].sum()
-store_data_open = training_df.groupby([training_df['Store']])['Open'].count()
+store_data_sales = training_df.groupby([training_df["Store"]])["Sales"].sum()
+store_data_customers = training_df.groupby([training_df["Store"]])["Customers"].sum()
+store_data_open = training_df.groupby([training_df["Store"]])["Open"].count()
 
 store_data_sales_per_day = store_data_sales / store_data_open
 store_data_customers_per_day = store_data_customers / store_data_open
-store_data_sales_per_customer_per_day = store_data_sales_per_day /store_data_customers_per_day
+store_data_sales_per_customer_per_day = store_data_sales_per_day / store_data_customers_per_day
 
-store_df = pd.merge(store_df, store_data_sales_per_day.reset_index(name='SalesPerDay'), how='left', on=['Store'])
-store_df = pd.merge(store_df, store_data_customers_per_day.reset_index(name='CustomersPerDay'), how='left', on=['Store'])
-store_df = pd.merge(store_df, store_data_sales_per_customer_per_day.reset_index(name='SalesPerCustomersPerDay'), how='left', on=['Store'])
+merged_df = pd.merge(store_df, store_data_sales_per_day.reset_index(name="AvgSalesForOpenDays"), how="left", on=["Store"])
+merged_df = pd.merge(merged_df, store_data_customers_per_day.reset_index(name="AvgCustomersForOpenDays"), how="left", on=["Store"])
+merged_df = pd.merge(merged_df, store_data_sales_per_customer_per_day.reset_index(name="AvgSalesPerCustomerForOpenDays"), how="left", on=["Store"])
 
 fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="Store", y="SalesPerDay", data=store_df, ax=axis1, ci=None)
+sns.barplot(x="Store", y="AvgSalesForOpenDays", data=merged_df, ax=axis1, ci=None)
 fig.tight_layout()
-fig.savefig("plots/SalesPerDay (by Store).png", dpi=fig.dpi)
+fig.savefig("plots/Avg. Sales for Open Days (by Store).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 
 fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="Store", y="CustomersPerDay", data=store_df, ax=axis1, ci=None)
+sns.barplot(x="Store", y="AvgCustomersForOpenDays", data=merged_df, ax=axis1, ci=None)
 fig.tight_layout()
-fig.savefig("plots/CustomersPerDay (by Store).png", dpi=fig.dpi)
+fig.savefig("plots/Avg. Customers for Open Days (by Store).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 
 fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="Store", y="SalesPerCustomersPerDay", data=store_df, ax=axis1, ci=None)
+sns.barplot(x="Store", y="AvgSalesPerCustomerForOpenDays", data=merged_df, ax=axis1, ci=None)
 fig.tight_layout()
-fig.savefig("plots/SalesPerCustomersPerDay (by Store).png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-
-
-fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="StoreType", y="SalesPerDay", order=["a", "b", "c", "d"], data=store_df, ax=axis1, ci=None)
-fig.tight_layout()
-fig.savefig("plots/SalesPerDay (by StoreType).png", dpi=fig.dpi)
+fig.savefig("plots/Avg. Sales per Customer for Open Days (by Store).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 
 fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="StoreType", y="CustomersPerDay", order=["a", "b", "c", "d"], data=store_df, ax=axis1, ci=None)
+sns.barplot(x="StoreType", y="AvgSalesForOpenDays", order=["a", "b", "c", "d"], data=merged_df, ax=axis1, ci=None)
 fig.tight_layout()
-fig.savefig("plots/CustomersPerDay (by StoreType).png", dpi=fig.dpi)
+fig.savefig("plots/Avg. Sales for Open Days (by Store Type).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 
 fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="StoreType", y="SalesPerCustomersPerDay", order=["a", "b", "c", "d"], data=store_df, ax=axis1, ci=None)
+sns.barplot(x="StoreType", y="AvgCustomersForOpenDays", order=["a", "b", "c", "d"], data=merged_df, ax=axis1, ci=None)
 fig.tight_layout()
-fig.savefig("plots/SalesPerCustomersPerDay (by StoreType).png", dpi=fig.dpi)
+fig.savefig("plots/Avg. Customers for Open Days (by Store Type).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="StoreType", y="AvgSalesPerCustomerForOpenDays", order=["a", "b", "c", "d"], data=merged_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales per Customer for Open Days (by Store Type).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
