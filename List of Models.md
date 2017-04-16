@@ -30,9 +30,6 @@
 - `xgboostregressor2.py`
     - Private Score: 0.13205, Public Score: 0.11356
     - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
-- `xgboostregressor-log.py`
-    - Private Score: 0.12728, Public Score: 0.10754
-    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
 - `xgboostregressor3.py`
     - Private Score: 0.13264, Public Score: 0.11770
     - Features: Store, Year, Month, YearMonth, Open, Promo, SchoolHoliday, CompetitionDistance, Promo2, CompetitionOpenSinceYear, StateHoliday, DayOfWeek, StateHolidayBinary, StoreType, Assortment
@@ -48,6 +45,12 @@
 - `xgboostregressor7.py`
     - Private Score: 0.18834, Public Score: 0.18797
     - Features: Store, Day, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenInt, SalesPerDay, CustomersPerDay, SalesPerCustomersPerDay, DaysSinceStartOfTrainingSet
+- `xgboostregressor-log.py`
+    - Private Score: 0.12728, Public Score: 0.10754
+    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
+- `xgboostregressor-log-cv.py`
+    - Private Score: 0.12911, Public Score: 0.10710
+    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2    
 - `xgb.py`
     - Private Score: 0.15591, Public Score: 0.17379
     - Features: Store, Day, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenInt, SalesPerDay, CustomersPerDay, SalesPerCustomersPerDay
