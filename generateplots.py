@@ -535,3 +535,72 @@ fig.tight_layout()
 fig.savefig("plots/Avg. Sales per Customer for Open Days (by Store Type).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
+
+############################################
+# Sales vs DaysSinceStartOfTrainingSet     #
+############################################
+
+store_data = training_df
+
+DateTime = store_data["Date"].apply(lambda x: (dt.datetime.strptime(x, "%Y-%m-%d")))
+minDateTime = min(DateTime)
+store_data["DaysSinceStartOfTrainingSet"] = store_data["Date"].apply(lambda x: int((dt.datetime.strptime(x, "%Y-%m-%d") - minDateTime).days) + 1)
+AvgSales = store_data.groupby("DaysSinceStartOfTrainingSet")["Sales"].mean()
+
+fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
+ax = AvgSales.plot(legend=True, marker="x", ax=axis1)
+ax.set_xticks(range(len(AvgSales))[0::100])
+ax.set_xticklabels(AvgSales.index.tolist()[0::100], rotation=90)
+
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales vs DaysSinceStartOfTrainingSet.png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales vs DaysSinceStartOfTrainingSet.")
+
+############################################
+# Sales vs log(DaysSinceStartOfTrainingSet)#
+############################################
+
+store_data = training_df
+
+DateTime = store_data["Date"].apply(lambda x: (dt.datetime.strptime(x, "%Y-%m-%d")))
+minDateTime = min(DateTime)
+store_data["DaysSinceStartOfTrainingSet"] = store_data["Date"].apply(lambda x: int((dt.datetime.strptime(x, "%Y-%m-%d") - minDateTime).days) + 1)
+store_data["LogDaysSinceStartOfTrainingSet"] = np.log1p(store_data["DaysSinceStartOfTrainingSet"])
+store_data["LogSales"] = np.log1p(store_data["Sales"])
+AvgSales = store_data.groupby("LogDaysSinceStartOfTrainingSet")["LogSales"].mean()
+import math
+fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
+ax = AvgSales.plot(legend=True, marker="x", ax=axis1)
+ax.set_xticks(range(8))
+ax.set_xticklabels(AvgSales.index.tolist()[0:8], rotation=90)
+
+fig.tight_layout()
+fig.savefig("plots/Avg. Log Sales vs Log DaysSinceStartOfTrainingSet.png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Log Sales vs Log DaysSinceStartOfTrainingSet.")
+
+############################################
+# Sales vs log(DaysSinceStartOfTrainingSet)#
+############################################
+
+store_data = training_df
+
+DateTime = store_data["Date"].apply(lambda x: (dt.datetime.strptime(x, "%Y-%m-%d")))
+minDateTime = min(DateTime)
+store_data["DaysSinceStartOfTrainingSet"] = store_data["Date"].apply(lambda x: int((dt.datetime.strptime(x, "%Y-%m-%d") - minDateTime).days) + 1)
+store_data["LogDaysSinceStartOfTrainingSet"] = np.log1p(store_data["DaysSinceStartOfTrainingSet"])
+AvgSales = store_data.groupby("LogDaysSinceStartOfTrainingSet")["Sales"].mean()
+import math
+fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
+ax = AvgSales.plot(legend=True, marker="x", ax=axis1)
+ax.set_xticks(range(8))
+ax.set_xticklabels(AvgSales.index.tolist()[0:8], rotation=90)
+
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales vs Log DaysSinceStartOfTrainingSet.png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales vs Log DaysSinceStartOfTrainingSet.")
