@@ -120,12 +120,14 @@ test_df.drop(["Open"], axis=1, inplace=True)
 ################################################################
 
 def rmspe(y_true, y_pred):
-    diff = y_pred - y_true
-    diff_percentage = diff / y_true
+    w = np.zeros(y_true.shape, dtype=float)
+    index = y_true != 0
+    w[index] = 1.0/(y_true[index])
+    diff = y_true - y_pred
+    diff_percentage = diff * w
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(diff_percentage_squared.mean())
+    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
     return rmspe
-
 
 ################################################################
 # Training the Model & Predicting Sales                        #
@@ -156,11 +158,11 @@ for i in test_dict:
     Y_train = store["Sales"]
     X_test = test_dict[i].copy()
 
-    # X_tr, X_te, Y_tr, Y_te = train_test_split(X_train, Y_train, test_size=0.4)
-    # lreg = LinearRegression()
-    # lreg.fit(X_tr, Y_tr)
-    # Y_pr = lreg.predict(X_te)
-    # print(rmspe(y_true=Y_te, y_pred=Y_pr))
+    X_tr, X_te, Y_tr, Y_te = train_test_split(X_train, Y_train, test_size=0.4)
+    lreg = LinearRegression()
+    lreg.fit(X_tr, Y_tr)
+    Y_pr = lreg.predict(X_te)
+    print("RMSPE: " + str(rmspe(y_true=Y_te, y_pred=Y_pr)))
 
     store_ids = X_test["Id"]
     X_test.drop(["Id", "Store"], axis=1, inplace=True)

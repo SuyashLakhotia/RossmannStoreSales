@@ -186,12 +186,14 @@ print ("Completed Custom Preprocessing.")
 ################################################################
 
 def rmspe(y_true, y_pred):
-    diff = y_pred - y_true
-    diff_percentage = diff / y_true
+    w = np.zeros(y_true.shape, dtype=float)
+    index = y_true != 0
+    w[index] = 1.0/(y_true[index])
+    diff = y_true - y_pred
+    diff_percentage = diff * w
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(diff_percentage_squared.mean())
+    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
     return rmspe
-
 
 ################################################################
 # Training the Model & Predicting Sales                        #
