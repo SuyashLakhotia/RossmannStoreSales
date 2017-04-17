@@ -129,6 +129,7 @@ fig.clf()
 plt.close(fig)
 print("Plotted Avg. Sales & Customers (by Month)")
 
+# Generate plots for Avg. Sales & Customers (by Day of Month)
 fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 8))
 sns.barplot(x="DayOfMonth", y="Sales", data=training_df, ax=axis1, ci=None)
 sns.barplot(x="DayOfMonth", y="Customers", data=training_df, ax=axis2, ci=None)
@@ -152,6 +153,16 @@ fig.savefig("plots/Avg. Sales & Customers (by Day of Week).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 print("Plotted Avg. Sales & Customers (by Day of Week)")
+
+# Generate plots for Avg. Sales & Customers (by Day of Week for Open Stores)
+fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 8))
+sns.barplot(x="DayOfWeek", y="Sales", data=training_df_open, order=[1, 2, 3, 4, 5, 6, 7], ax=axis1, ci=None)
+sns.barplot(x="DayOfWeek", y="Customers", data=training_df_open, order=[1, 2, 3, 4, 5, 6, 7], ax=axis2, ci=None)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales & Customers (by Day of Week for Open Stores).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales & Customers (by Day of Week for Open Stores)")
 
 
 ############################################
