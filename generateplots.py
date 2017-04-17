@@ -489,7 +489,7 @@ print("Plotted Competition Distance vs. Avg. Customers")
 ############################################
 
 store_id = 6
-store_data = training_df[training_df["Store"] == store_id]
+store_data = training_df_open[training_df_open["Store"] == store_id]
 average_store_sales = store_data.groupby("YearMonth")["Sales"].mean()
 
 y = store_df["CompetitionOpenSinceYear"].loc[store_df["Store"] == store_id].values[0]
