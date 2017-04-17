@@ -65,9 +65,15 @@ training_df_open.drop(["Open"], axis=1, inplace=True)
 ############################################
 
 # Add "AvgSales" & "AvgCustomers" columns to store_df
-avg_sales_customers = training_df.groupby("Store")[["Sales", "Customers"]].mean()
+avg_sales_customers = training_df_open.groupby("Store")[["Sales", "Customers"]].mean()
 avg_sales_customers_df = DataFrame({"Store": avg_sales_customers.index, "AvgSales": avg_sales_customers["Sales"], "AvgCustomers": avg_sales_customers["Customers"]}, columns=["Store", "AvgSales", "AvgCustomers"])
 store_df = pd.merge(avg_sales_customers_df, store_df, on="Store")
+
+# Add "AvgSalesPerCustomer" column to store_df
+store_tot_sales = training_df.groupby([training_df["Store"]])["Sales"].sum()
+store_tot_custs = training_df.groupby([training_df["Store"]])["Customers"].sum()
+store_salespercust = store_tot_sales / store_tot_custs
+store_df = pd.merge(store_df, store_salespercust.reset_index(name="AvgSalesPerCustomer"), on="Store")
 
 # Fill NaN values in store_df for "CompetitionDistance" = 0 (since no record exists where "CD" = NaN & "COS[Y/M]" = !NaN)
 store_df["CompetitionDistance"][is_nan(store_df["CompetitionDistance"])] = 0
@@ -178,6 +184,16 @@ fig.savefig("plots/Avg. Sales & Customers (by Promo).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 print("Plotted Avg. Sales & Customers (by Promo)")
+
+# Generate plots for Avg. Sales & Customers (by Promo for Open Stores)
+fig, (axis1, axis2) = plt.subplots(1, 2, figsize=(15, 8))
+sns.barplot(x="Promo", y="Sales", data=training_df_open, ax=axis1, ci=None)
+sns.barplot(x="Promo", y="Customers", data=training_df_open, ax=axis2, ci=None)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales & Customers (by Promo for Open Stores).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales & Customers (by Promo for Open Stores)")
 
 
 ############################################
@@ -317,6 +333,45 @@ print("Plotted Frequency of Customers Values (for Open Stores)")
 
 
 ############################################
+# "AvgSales" Data Field                    #
+############################################
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="Store", y="AvgSales", data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales (by Store).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales (by Store)")
+
+
+############################################
+# "AvgCustomers" Data Field                #
+############################################
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="Store", y="AvgCustomers", data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/Avg. Customers (by Store).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Customers (by Store)")
+
+
+############################################
+# "AvgSalesPerCustomer" Data Field         #
+############################################
+
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="Store", y="AvgSalesPerCustomer", data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales per Customer (by Store).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales per Customer (by Store)")
+
+
+############################################
 # "StoreType" Data Field                   #
 ############################################
 
@@ -338,6 +393,15 @@ fig.savefig("plots/Avg. Sales & Customers (by Store Type).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 print("Plotted Avg. Sales & Customers (by Store Type)")
+
+# Generate plot for Avg. Sales per Customer (by Store Type)
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="StoreType", y="AvgSalesPerCustomer", order=["a", "b", "c", "d"], data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales per Customer (by Store Type).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales per Customer (by Store Type)")
 
 
 ############################################
@@ -362,6 +426,15 @@ fig.savefig("plots/Avg. Sales & Customers (by Assortment).png", dpi=fig.dpi)
 fig.clf()
 plt.close(fig)
 print("Plotted Avg. Sales & Customers (by Assortment)")
+
+# Generate plot for Avg. Sales per Customer (by Assortment)
+fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
+sns.barplot(x="Assortment", y="AvgSalesPerCustomer", order=["a", "b", "c"], data=store_df, ax=axis1, ci=None)
+fig.tight_layout()
+fig.savefig("plots/Avg. Sales per Customer (by Assortment).png", dpi=fig.dpi)
+fig.clf()
+plt.close(fig)
+print("Plotted Avg. Sales per Customer (by Assortment)")
 
 
 ############################################
@@ -487,131 +560,3 @@ fig.savefig("plots/Correlation Matrix (Stores 1 - 100).png")
 fig.clf()
 plt.close(fig)
 print("Plotted Correlation Matrix (Stores 1 - 100)")
-
-
-############################################
-# Sales Trends On a Per Day Basis          #
-############################################
-
-store_data_sales = training_df.groupby([training_df["Store"]])["Sales"].sum()
-store_data_customers = training_df.groupby([training_df["Store"]])["Customers"].sum()
-store_data_open = training_df.groupby([training_df["Store"]])["Open"].count()
-
-store_data_sales_per_day = store_data_sales / store_data_open
-store_data_customers_per_day = store_data_customers / store_data_open
-store_data_sales_per_customer_per_day = store_data_sales_per_day / store_data_customers_per_day
-
-merged_df = pd.merge(store_df, store_data_sales_per_day.reset_index(name="AvgSalesForOpenDays"), how="left", on=["Store"])
-merged_df = pd.merge(merged_df, store_data_customers_per_day.reset_index(name="AvgCustomersForOpenDays"), how="left", on=["Store"])
-merged_df = pd.merge(merged_df, store_data_sales_per_customer_per_day.reset_index(name="AvgSalesPerCustomerForOpenDays"), how="left", on=["Store"])
-
-fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="Store", y="AvgSalesForOpenDays", data=merged_df, ax=axis1, ci=None)
-fig.tight_layout()
-fig.savefig("plots/Avg. Sales for Open Days (by Store).png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-
-fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="Store", y="AvgCustomersForOpenDays", data=merged_df, ax=axis1, ci=None)
-fig.tight_layout()
-fig.savefig("plots/Avg. Customers for Open Days (by Store).png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-
-fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="Store", y="AvgSalesPerCustomerForOpenDays", data=merged_df, ax=axis1, ci=None)
-fig.tight_layout()
-fig.savefig("plots/Avg. Sales per Customer for Open Days (by Store).png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-
-fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="StoreType", y="AvgSalesForOpenDays", order=["a", "b", "c", "d"], data=merged_df, ax=axis1, ci=None)
-fig.tight_layout()
-fig.savefig("plots/Avg. Sales for Open Days (by Store Type).png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-
-fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="StoreType", y="AvgCustomersForOpenDays", order=["a", "b", "c", "d"], data=merged_df, ax=axis1, ci=None)
-fig.tight_layout()
-fig.savefig("plots/Avg. Customers for Open Days (by Store Type).png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-
-fig, axis1 = plt.subplots(1, 1, figsize=(15, 8))
-sns.barplot(x="StoreType", y="AvgSalesPerCustomerForOpenDays", order=["a", "b", "c", "d"], data=merged_df, ax=axis1, ci=None)
-fig.tight_layout()
-fig.savefig("plots/Avg. Sales per Customer for Open Days (by Store Type).png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-
-############################################
-# Sales vs DaysSinceStartOfTrainingSet     #
-############################################
-
-store_data = training_df
-
-DateTime = store_data["Date"].apply(lambda x: (dt.datetime.strptime(x, "%Y-%m-%d")))
-minDateTime = min(DateTime)
-store_data["DaysSinceStartOfTrainingSet"] = store_data["Date"].apply(lambda x: int((dt.datetime.strptime(x, "%Y-%m-%d") - minDateTime).days) + 1)
-AvgSales = store_data.groupby("DaysSinceStartOfTrainingSet")["Sales"].mean()
-
-fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
-ax = AvgSales.plot(legend=True, marker="x", ax=axis1)
-ax.set_xticks(range(len(AvgSales))[0::100])
-ax.set_xticklabels(AvgSales.index.tolist()[0::100], rotation=90)
-
-fig.tight_layout()
-fig.savefig("plots/Avg. Sales vs DaysSinceStartOfTrainingSet.png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-print("Plotted Avg. Sales vs DaysSinceStartOfTrainingSet.")
-
-############################################
-# Sales vs log(DaysSinceStartOfTrainingSet)#
-############################################
-
-store_data = training_df
-
-DateTime = store_data["Date"].apply(lambda x: (dt.datetime.strptime(x, "%Y-%m-%d")))
-minDateTime = min(DateTime)
-store_data["DaysSinceStartOfTrainingSet"] = store_data["Date"].apply(lambda x: int((dt.datetime.strptime(x, "%Y-%m-%d") - minDateTime).days) + 1)
-store_data["LogDaysSinceStartOfTrainingSet"] = np.log1p(store_data["DaysSinceStartOfTrainingSet"])
-store_data["LogSales"] = np.log1p(store_data["Sales"])
-AvgSales = store_data.groupby("LogDaysSinceStartOfTrainingSet")["LogSales"].mean()
-import math
-fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
-ax = AvgSales.plot(legend=True, marker="x", ax=axis1)
-ax.set_xticks(range(8))
-ax.set_xticklabels(AvgSales.index.tolist()[0:8], rotation=90)
-
-fig.tight_layout()
-fig.savefig("plots/Avg. Log Sales vs Log DaysSinceStartOfTrainingSet.png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-print("Plotted Avg. Log Sales vs Log DaysSinceStartOfTrainingSet.")
-
-############################################
-# Sales vs log(DaysSinceStartOfTrainingSet)#
-############################################
-
-store_data = training_df
-
-DateTime = store_data["Date"].apply(lambda x: (dt.datetime.strptime(x, "%Y-%m-%d")))
-minDateTime = min(DateTime)
-store_data["DaysSinceStartOfTrainingSet"] = store_data["Date"].apply(lambda x: int((dt.datetime.strptime(x, "%Y-%m-%d") - minDateTime).days) + 1)
-store_data["LogDaysSinceStartOfTrainingSet"] = np.log1p(store_data["DaysSinceStartOfTrainingSet"])
-AvgSales = store_data.groupby("LogDaysSinceStartOfTrainingSet")["Sales"].mean()
-import math
-fig, (axis1) = plt.subplots(1, 1, figsize=(15, 8))
-ax = AvgSales.plot(legend=True, marker="x", ax=axis1)
-ax.set_xticks(range(8))
-ax.set_xticklabels(AvgSales.index.tolist()[0:8], rotation=90)
-
-fig.tight_layout()
-fig.savefig("plots/Avg. Sales vs Log DaysSinceStartOfTrainingSet.png", dpi=fig.dpi)
-fig.clf()
-plt.close(fig)
-print("Plotted Avg. Sales vs Log DaysSinceStartOfTrainingSet.")
