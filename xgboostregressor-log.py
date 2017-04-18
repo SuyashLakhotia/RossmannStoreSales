@@ -153,6 +153,10 @@ def rmspe(y_true, y_pred):
 A XGB regression model for all stores. This model is the same as xgboostregressor2 but it uses log factorization of the output variable "Sales". This improves the distribution and prediction results.
 
 Features: Store, DayOfWeek, Year, Month, DayOfMonth, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
+
+Assumptions:
+- DayOfMonth has an effect on sales, for example, the sales is higher on paydays.
+- The store's opening/closing dates does not affect the store's performance. For example, a store that was closed yesterday will not get more sales today because of that.
 """
 
 if (validate):

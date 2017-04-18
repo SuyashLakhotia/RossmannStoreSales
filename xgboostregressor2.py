@@ -143,9 +143,8 @@ A XGBoost regression model. The model trains using all store data and runs once 
 Features: Store, DayOfWeek, Year, Month, DayOfMonth, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
 
 Assumptions:
-- DayOfMonth has an effect on the sales because some days are more important than others, ex. pay day.
-- The YearMonth column does not affect the sales because test data is only for six weeks.
-- The competition of each store will affect it consistently, hence, it does not matter when the competition started.
+- DayOfMonth has an effect on sales, for example, the sales is higher on paydays.
+- The store's opening/closing dates does not affect the store's performance. For example, a store that was closed yesterday will not get more sales today because of that.
 """
 
 print("Making predictions...")

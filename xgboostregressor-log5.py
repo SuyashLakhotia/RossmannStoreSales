@@ -186,6 +186,12 @@ def rmspe(y_true, y_pred):
 XGB Regression Model with log and exp standardization. Creates additional features for DayOfYear, AvgSales, CustomersPerDay, AvgSalesPerCustomer.
 
 Features: Store, DayOfMonth, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenYearMonthInteger, AvgSales, AvgCustomers, AvgSalesPerCustomer
+
+Assumptions:
+- DayOfMonth has an effect on sales, for example, the sales is higher on paydays.
+- The store's opening/closing dates does not affect the store's performance. For example, a store that was closed yesterday will not get more sales today because of that.
+- Sales has a correlation with Average Sales per Customer.
+- Sales is affected by CompetitionOpenSince[X]. Thus, a new feature merging the year and month of the opening date is created, CompetitionOpenYearMonthInteger.
 """
 
 if (validate):
