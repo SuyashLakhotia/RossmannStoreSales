@@ -29,7 +29,7 @@
     - Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
 - `xgboostregressor2.py`
     - Private Score: 0.13205, Public Score: 0.11356
-    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
+    - Features: Store, DayOfWeek, Year, Month, DayOfMonth, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
 - `xgboostregressor3.py`
     - Private Score: 0.13264, Public Score: 0.11770
     - Features: Store, Year, Month, YearMonth, Open, Promo, SchoolHoliday, CompetitionDistance, Promo2, CompetitionOpenSinceYear, StateHoliday, DayOfWeek, StateHolidayBinary, StoreType, Assortment
@@ -38,38 +38,14 @@
     - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2, AvgCustStore, AvgCustStoreMonth
 - `xgboostregressor5.py`
     - Private Score: 0.12708, Public Score: 0.11219
-    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, SchoolHoliday, CompetitionDistance, Promo2, WeekOfYear, CompetitionOpen, PromoOpen, IsPromoMonth, StoreType, Assortment, StateHoliday
+    - Features: Store, DayOfWeek, Year, Month, DayOfMonth, Open, Promo, SchoolHoliday, CompetitionDistance, Promo2, WeekOfYear, CompetitionOpenInterval, PromoOpenInterval, IsPromoMonth, StoreType, Assortment, StateHoliday
 - `xgboostregressor6.py`
     - Private Score: 0.12305, Public Score: 0.11276
-    - Features: Store, Day, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenInt, SalesPerDay, CustomersPerDay, SalesPerCustomersPerDay
-- `xgboostregressor7.py`
-    - Private Score: 0.18834, Public Score: 0.18797
-    - Features: Store, Day, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenInt, SalesPerDay, CustomersPerDay, SalesPerCustomersPerDay, DaysSinceStartOfTrainingSet
+    - Features: Store, DayOfMonth, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenYearMonthInteger, AvgSalesForOpenDays, AvgCustomersForOpenDays, AvgSalesPerCustomerForOpenDays
 - `xgboostregressor-log.py`
     - Private Score: 0.12728, Public Score: 0.10754
-    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
-- `xgboostregressor-log-cv.py`
-    - Private Score: 0.12911, Public Score: 0.10710
-    - Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
-- `xgb.py`
-    - Private Score: 0.15591, Public Score: 0.17379
-    - Features: Store, Day, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenInt, SalesPerDay, CustomersPerDay, SalesPerCustomersPerDay
-- `xgboostensembler.py`
-    - Private Score: 0.12015, Public Score: 0.10561
-    - Models: xgboostregressor6, xgboostregressor-log
-- `xgboostensembler1.py`
-    - Private Score: 0.11919, Public Score: 0.10514
-    - Models: xgboostregressor6, xgboostregressor-log
-- `xgboostensembler2.py`
-    - Private Score: 0.11904, Public Score: 0.10527
-    - Models: xgboostregressor6, xgboostregressor-log
-- `xgboostensembler3.py`
-    - Private Score: 0.11882, Public Score: 0.10616
-    - Models: xgboostregressor6, xgboostregressor-log
-- `xgboostensembler4.py`
-    - Private Score: 0.11880, Public Score: 0.10648
-    - Models: xgboostregressor6, xgboostregressor-log
-- `xgboostensembler5.py`
+    - Features: Store, DayOfWeek, Year, Month, DayOfMonth, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
+- `xgboostensemble.py`
     - Private Score: 0.11381, Public Score: 0.10462
     - Models: xgboostregressor6, xgboostregressor-log
 - `simplemedian.py`

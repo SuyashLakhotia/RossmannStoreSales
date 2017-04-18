@@ -16,21 +16,16 @@ from sklearn.preprocessing import LabelEncoder
 
 pd.options.mode.chained_assignment = None
 
-
 ################################################################
 # Import CSV Data into Pandas DataFrames                       #
 ################################################################
-train_df = pd.read_csv("data/train.csv", dtype={"StateHoliday": pd.np.string_})
+training_df = pd.read_csv("data/train.csv", dtype={"StateHoliday": pd.np.string_})
 store_df = pd.read_csv("data/store.csv")
-testing_df = pd.read_csv("data/test.csv", dtype={"StateHoliday": pd.np.string_})
-
-training_df = pd.merge(train_df, store_df, on="Store", how="left")
-test_df = pd.merge(testing_df, store_df, on="Store", how="left")
+test_df = pd.read_csv("data/test.csv", dtype={"StateHoliday": pd.np.string_})
 
 # print(training_df.head())
 # print(store_df.head())
 # print(test_df.head())
-
 
 ################################################################
 # Process Data (Universal)                                     #
@@ -96,17 +91,22 @@ store_df["CompetitionOpenSinceMonth"][(store_df["CompetitionDistance"] != 0) & (
 # Process Data (Custom)                                        #
 ################################################################
 
-training_df["Day"] = training_df.Date.apply(lambda x: x.split("-")[2])
-training_df["Day"] = training_df["Day"].astype(float)
+# Merge store_df with test_df and training_df
+training_df = pd.merge(training_df, store_df, on="Store", how="left")
+test_df = pd.merge(test_df, store_df, on="Store", how="left")
 
-test_df["Day"] = test_df.Date.apply(lambda x: x.split("-")[2])
-test_df["Day"] = test_df["Day"].astype(float)
+# Estimating DayOfMonth. Useful for trends such as pay day.
+training_df["DayOfMonth"] = training_df.Date.apply(lambda x: x.split("-")[2])
+training_df["DayofMonth"] = training_df["DayOfMonth"].astype(float)
 
-closed_store_ids = test_df["Id"][test_df["Open"] == 0].values
+test_df["DayOfMonth"] = test_df.Date.apply(lambda x: x.split("-")[2])
+test_df["DayOfMonth"] = test_df["DayOfMonth"].astype(float)
 
+# Filling all NaN values with 0
 training_df = training_df.fillna(0)
 test_df = test_df.fillna(0)
 
+# Selecting only open stores and ignoring the closed stores for training
 training_df = training_df[training_df["Open"] == 1]
 
 # Create new DataFrames for Average Customers per Store & per Store per Month for "Customers" != 0
@@ -124,11 +124,13 @@ training_df = pd.merge(training_df, avg_cust_month, on=["Store", "Month"])
 test_df = pd.merge(test_df, avg_cust, on=["Store"])
 test_df = pd.merge(test_df, avg_cust_month, on=["Store", "Month"])
 
+# Log factorization of Sales changes the distribution and makes the performance much better 
 training_df['Sales'] = np.log(training_df['Sales']+1)
 
-features = ["Store", "DayOfWeek", "Year", "Month", "Day", "Open", "Promo", "StateHoliday", "SchoolHoliday", "StoreType", "Assortment", "CompetitionDistance", "Promo2", "AvgCustStore", "AvgCustStoreMonth"]
+# List of features to be used in the model
+features = ["Store", "DayOfWeek", "Year", "Month", "DayOfMonth", "Open", "Promo", "StateHoliday", "SchoolHoliday", "StoreType", "Assortment", "CompetitionDistance", "Promo2", "AvgCustStore", "AvgCustStoreMonth"]
 
-print("Preprocessing by label encoding.")
+# Label encoding of columns (eg. StoreType with "a", "b", "c" and "d" would become 1, 2, 3 and 4)
 for f in training_df[features]:
     if training_df[f].dtype == "object":
         labels = LabelEncoder()
@@ -142,11 +144,15 @@ for f in training_df[features]:
 ################################################################
 
 def rmspe(y_true, y_pred):
-    w = np.zeros(y_true.shape, dtype=float)
-    index = y_true != 0
-    w[index] = 1.0/(y_true[index])
+    """
+    RMSPE =  sqrt(1/n * sum( ( (y_true - y_pred)/y_true) ** 2 ) )
+    """
+    # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
+    multiplying_factor = np.zeros(y_true.shape, dtype=float)
+    indices = y_true != 0
+    multiplying_factor[indices] = 1.0/(y_true[indices])
     diff = y_true - y_pred
-    diff_percentage = diff * w
+    diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
     rmspe = np.sqrt(np.mean( diff_percentage_squared ))
     return rmspe
@@ -158,12 +164,12 @@ def rmspe(y_true, y_pred):
 """
 A XGB regression model for all stores. Adds two extra features (AvgCustStore, AvgCustStoreMonth) to improve the model. Uses log standardization for the Sales output.
 
-Features: Store, DayOfWeek, Year, Month, Day, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2, AvgCustStore, AvgCustStoreMonth
+Features: Store, DayOfWeek, Year, Month, DayOfMonth, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2, AvgCustStore, AvgCustStoreMonth
 """
 
+# Comment this block when not training
+################ TRAINING ###############
 print("Training...")
-
-# Uncomment to train
 regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
                          learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
 regressor.fit(np.array(training_df[features]), training_df["Sales"])
@@ -172,20 +178,26 @@ with open("models/xgboostregressor4.pkl", "wb") as fid:
     pickle.dump(regressor, fid)
 
 print("Model saved to models/xgboostregressor4.pkl")
+########### TRAINING COMPLETED ##########
 
+# Uncomment this block when not training
 # with open("models/xgboostregressor4.pkl", "rb") as fid:
 #     regressor = pickle.load(fid)
+# print ("Loaded the model.")
 
 print("Making predictions...")
 
 predictions = []
 for i in test_df["Id"].tolist():
     if test_df[test_df["Id"] == i]["Open"].item() == 0:
+        # Appending 0 for closed stores
         predictions += [[i, 0]]
     else:
+        # Appending prediction for open stores
         prediction = np.exp(regressor.predict(np.array(test_df[test_df["Id"] == i][features]))[0])-1
         predictions += [[i, prediction]]
 
+# Using the csv library to save the file
 with open("predictions/xgboostregressor4.csv", "w") as f:
     csv_writer = csv.writer(f, lineterminator="\n")
     csv_writer.writerow(["Id", "Sales"])

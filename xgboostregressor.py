@@ -121,11 +121,15 @@ test_df.drop(["Open"], axis=1, inplace=True)
 ################################################################
 
 def rmspe(y_true, y_pred):
-    w = np.zeros(y_true.shape, dtype=float)
-    index = y_true != 0
-    w[index] = 1.0/(y_true[index])
+    """
+    RMSPE =  sqrt(1/n * sum( ( (y_true - y_pred)/y_true) ** 2 ) )
+    """
+    # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
+    multiplying_factor = np.zeros(y_true.shape, dtype=float)
+    indices = y_true != 0
+    multiplying_factor[indices] = 1.0/(y_true[indices])
     diff = y_true - y_pred
-    diff_percentage = diff * w
+    diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
     rmspe = np.sqrt(np.mean( diff_percentage_squared ))
     return rmspe
@@ -152,8 +156,7 @@ training_dict = dict(list(training_df.groupby("Store")))
 test_dict = dict(list(test_df.groupby("Store")))
 predictions = Series()
 
-
-xgreg = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
+regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
 learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
 for i in test_dict:
     store = training_dict[i]
@@ -163,8 +166,8 @@ for i in test_dict:
     X_test = test_dict[i].copy()
 
     # X_tr, X_te, Y_tr, Y_te = train_test_split(X_train, Y_train, test_size=0.4, random_state=2)
-    # xgreg.fit(X_tr, Y_tr)
-    # Y_pr = xgreg.predict(X_te)
+    # regressor.fit(X_tr, Y_tr)
+    # Y_pr = regressor.predict(X_te)
     # print(rmspe(y_true=Y_te, y_pred=Y_pr))
 
     store_ids = X_test["Id"]
@@ -172,14 +175,14 @@ for i in test_dict:
 
     X_test = X_test.reindex(columns=X_train.columns, fill_value=0)
 
-    xgreg.fit(X_train, Y_train)
-    Y_pred = xgreg.predict(X_test)
+    regressor.fit(X_train, Y_train)
+    Y_pred = regressor.predict(X_test)
 
     predictions = predictions.append(Series(Y_pred, index=store_ids))
 
 predictions = predictions.append(Series(0, index=closed_store_ids))
 
 submission = pd.DataFrame({"Id": predictions.index, "Sales": predictions.values})
-submission.to_csv("predictions/xgboost.csv", index=False)
+submission.to_csv("predictions/xgboostregressor.csv", index=False)
 
 print("Predictions saved.")

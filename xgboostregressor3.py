@@ -1,6 +1,5 @@
 """
-Private Score: 0.13264, Public Score: 0.11770
-    
+Private Score: 0.13264, Public Score: 0.11770 
 """
 
 import datetime as dt
@@ -16,7 +15,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
 pd.options.mode.chained_assignment = None
-
 
 ################################################################
 # Import CSV Data into Pandas DataFrames                       #
@@ -97,24 +95,20 @@ store_df["CompetitionOpenSinceMonth"][(store_df["CompetitionDistance"] != 0) & (
 # Process Data (Custom)                                        #
 ################################################################
 
-# training_df["Day"] = training_df.Date.apply(lambda x: x.split("-")[2])
-# training_df["Day"] = training_df["Day"].astype(float)
-
-# test_df["Day"] = test_df.Date.apply(lambda x: x.split("-")[2])
-# test_df["Day"] = test_df["Day"].astype(float)
-
-closed_store_ids = test_df["Id"][test_df["Open"] == 0].values
-
+# Filling all NaN values with 0
 training_df = training_df.fillna(0)
 test_df = test_df.fillna(0)
 
+# Selecting only open stores
 training_df = training_df[training_df["Open"] == 1]
 
+# Log factorization of Sales changes the distribution and makes the performance much better 
 training_df['Sales'] = np.log(training_df['Sales']+1)
 
+# List of features to be used
 features = ["Store", "Year", "Month", "YearMonth", "Open", "Promo", "SchoolHoliday", "CompetitionDistance", "Promo2", "CompetitionOpenSinceYear", "StateHoliday", "DayOfWeek", "StateHolidayBinary", "StoreType", "Assortment"]
 
-print("Preprocessing by label encoding.")
+# Label encoding of columns (eg. StoreType with "a", "b", "c" and "d" would become 1, 2, 3 and 4)
 for f in training_df[features]:
     if training_df[f].dtype == "object":
         labels = LabelEncoder()
@@ -128,11 +122,15 @@ for f in training_df[features]:
 ################################################################
 
 def rmspe(y_true, y_pred):
-    w = np.zeros(y_true.shape, dtype=float)
-    index = y_true != 0
-    w[index] = 1.0/(y_true[index])
+    """
+    RMSPE =  sqrt(1/n * sum( ( (y_true - y_pred)/y_true) ** 2 ) )
+    """
+    # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
+    multiplying_factor = np.zeros(y_true.shape, dtype=float)
+    indices = y_true != 0
+    multiplying_factor[indices] = 1.0/(y_true[indices])
     diff = y_true - y_pred
-    diff_percentage = diff * w
+    diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
     rmspe = np.sqrt(np.mean( diff_percentage_squared ))
     return rmspe
@@ -149,7 +147,9 @@ Features: Store, Year, Month, YearMonth, Open, Promo, SchoolHoliday, Competition
 
 print("Training...")
 
-# Uncomment to train
+# Comment this block when not training
+################ TRAINING ###############
+print("Training...")
 regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
                          learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
 regressor.fit(np.array(training_df[features]), training_df["Sales"])
@@ -158,20 +158,26 @@ with open("models/xgboostregressor3.pkl", "wb") as fid:
     pickle.dump(regressor, fid)
 
 print("Model saved to models/xgboostregressor3.pkl")
+########### TRAINING COMPLETED ##########
 
+# Uncomment this block when not training
 # with open("models/xgboostregressor3.pkl", "rb") as fid:
 #     regressor = pickle.load(fid)
+# print ("Loaded the model.")
 
 print("Making predictions...")
 
 predictions = []
 for i in test_df["Id"].tolist():
     if test_df[test_df["Id"] == i]["Open"].item() == 0:
+        # Appending 0 for closed stores
         predictions += [[i, 0]]
     else:
+        # Appending prediction for open stores
         prediction = np.exp(regressor.predict(np.array(test_df[test_df["Id"] == i][features]))[0])-1
         predictions += [[i, prediction]]
 
+# Using the csv library to save the file
 with open("predictions/xgboostregressor3.csv", "w") as f:
     csv_writer = csv.writer(f, lineterminator="\n")
     csv_writer.writerow(["Id", "Sales"])

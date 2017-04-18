@@ -1,40 +1,32 @@
 """
-Private Score: 0.12305, Public Score: 0.11276
+Private Score: 0.12305, Public Score: 0.11276, Local Score: 0.11976
 """
 
-import datetime as dt
 import pickle
+import sys
 
 import pandas as pd
 from pandas import Series, DataFrame
 import numpy as np
 import matplotlib.pyplot as plt
 
-from xgboost import XGBRegressor, plot_importance 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+from xgboost import XGBRegressor, plot_importance
 
 pd.options.mode.chained_assignment = None
 
+validate = False
+
+# Run the script with validate as argument for validation (```python xgboostregressor6.py validate```) 
+if (len(sys.argv) > 1) and (sys.argv[1] == "validate"):
+    validate = True
 
 ################################################################
 # Import CSV Data into Pandas DataFrames                       #
 ################################################################
 
-types = {'CompetitionOpenSinceYear': np.dtype(int),
-         'CompetitionOpenSinceMonth': np.dtype(int),
-         'StateHoliday': np.dtype(str),
-         'Promo2SinceWeek': np.dtype(int),
-         'SchoolHoliday': np.dtype(float),
-         'PromoInterval': np.dtype(str)}
-
-training_df = pd.read_csv("data/train.csv", parse_dates=[2], dtype=types)
+training_df = pd.read_csv("data/train.csv", parse_dates=[2])
 store_df = pd.read_csv("data/store.csv")
-test_df = pd.read_csv("data/test.csv", parse_dates=[3], dtype=types)
-# print(training_df.head())
-# print(store_df.head())
-# print(test_df.head())
-
+test_df = pd.read_csv("data/test.csv", parse_dates=[3])
 
 ################################################################
 # Process Data (Universal)                                     #
@@ -102,51 +94,41 @@ store_df["CompetitionOpenSinceMonth"][(store_df["CompetitionDistance"] != 0) & (
 
 print ("Starting Custom Preprocessing.")
 
-# Preprocessing on store
-# SalesPerDay, CustomersPerDay, SalesPerCustomerPerDay
+# Computation for AvgSalesForOpenDays, AvgCustomersForOpenDays, AvgSalesPerCustomerForOpenDays
+totalSalesPerStore = training_df.groupby([training_df['Store']])['Sales'].sum()
+totalCustomersPerStore = training_df.groupby([training_df['Store']])['Customers'].sum()
+numberOfOpenStores = training_df.groupby([training_df['Store']])['Open'].count()
 
-store_data_sales = training_df.groupby([training_df['Store']])['Sales'].sum()
-store_data_customers = training_df.groupby([training_df['Store']])['Customers'].sum()
-store_data_open = training_df.groupby([training_df['Store']])['Open'].count()
+# Average Sales for Open Days 
+AvgSalesForOpenDays = totalSalesPerStore / numberOfOpenStores
+AvgCustomersForOpenDays = totalCustomersPerStore / numberOfOpenStores
+AvgSalesPerCustomerForOpenDays = AvgSalesForOpenDays /AvgCustomersForOpenDays
 
-store_data_sales_per_day = store_data_sales / store_data_open
-store_data_customers_per_day = store_data_customers / store_data_open
-store_data_sales_per_customer_per_day = store_data_sales_per_day /store_data_customers_per_day
+store_df = pd.merge(store_df, AvgSalesForOpenDays.reset_index(name='AvgSalesForOpenDays'), how='left', on=['Store'])
+store_df = pd.merge(store_df, AvgCustomersForOpenDays.reset_index(name='AvgCustomersForOpenDays'), how='left', on=['Store'])
+store_df = pd.merge(store_df, AvgSalesPerCustomerForOpenDays.reset_index(name='AvgSalesPerCustomerForOpenDays'), how='left', on=['Store'])
 
-store_df = pd.merge(store_df, store_data_sales_per_day.reset_index(name='SalesPerDay'), how='left', on=['Store'])
-store_df = pd.merge(store_df, store_data_customers_per_day.reset_index(name='CustomersPerDay'), how='left', on=['Store'])
-store_df = pd.merge(store_df, store_data_sales_per_customer_per_day.reset_index(name='SalesPerCustomersPerDay'), how='left', on=['Store'])
 
 # Merging store with training and test data frames
 training_df = pd.merge(training_df, store_df, on="Store", how="left")
 test_df = pd.merge(test_df, store_df, on="Store", how="left")
 
-training_df = training_df.fillna(0)
-test_df = test_df.fillna(0)
-
+# Select only Open Stores for training
 training_df = training_df[training_df["Open"] == 1]
 
-# Computing the day
-training_df["Day"] = training_df.Date.dt.day
-
-test_df["Day"] = test_df.Date.dt.day
+# Computing the DayOfMonth
+training_df["DayOfMonth"] = training_df.Date.dt.day
+test_df["DayOfMonth"] = test_df.Date.dt.day
 
 # Computing DayOfYear
 training_df["DayOfYear"] = training_df.Date.dt.dayofyear
-
 test_df["DayOfYear"] = test_df.Date.dt.dayofyear
 
 # Computing Week
 training_df["Week"] = training_df.Date.dt.week
-
 test_df["Week"] = test_df.Date.dt.week
 
-# Computing DayOfWeek
-training_df["DayOfWeek"] = training_df.Date.dt.dayofweek
-
-test_df["DayOfWeek"] = test_df.Date.dt.dayofweek
-
-# Label encoding 
+# Label encoding using panda category datatype. Label encoded StateHoliday, Assortment and StoreType
 training_df['StateHoliday'] = training_df['StateHoliday'].astype('category').cat.codes
 test_df['StateHoliday'] = test_df['StateHoliday'].astype('category').cat.codes
 
@@ -156,26 +138,23 @@ test_df['Assortment'] = test_df['Assortment'].astype('category').cat.codes
 training_df['StoreType'] = training_df['StoreType'].astype('category').cat.codes
 test_df['StoreType'] = test_df['StoreType'].astype('category').cat.codes
 
-# Competition Open Int
-def convertCompetitionOpen(df):
+# Log Standardization ==> Better for RMSPE
+training_df['Sales'] = np.log1p(training_df['Sales'])
+
+# Helper function to create CompetitionOpenYearMonthInteger
+def yearMonthGenerator(df):
     try:
         date = '{}-{}'.format(int(df['CompetitionOpenSinceYear']), int(df['CompetitionOpenSinceMonth']))
         return pd.to_datetime(date)
     except:
         return 0
 
-training_df['CompetitionOpenInt'] = training_df.apply(lambda df: convertCompetitionOpen(training_df), axis=1).astype(np.int64)
+training_df['CompetitionOpenYearMonthInteger'] = pd.to_numeric(training_df.apply(lambda df: yearMonthGenerator(df), axis=1), errors="coerce")
+test_df['CompetitionOpenYearMonthInteger'] = pd.to_numeric(test_df.apply(lambda df: yearMonthGenerator(df), axis=1), errors="coerce")
 
-test_df['CompetitionOpenInt'] = test_df.apply(lambda df: convertCompetitionOpen(test_df), axis=1).astype(np.int64)
+features = ['Store', 'DayOfMonth', 'Week', 'Month','Year','DayOfYear', 'DayOfWeek', 'Open', 'Promo', 'SchoolHoliday', 'StateHoliday', 'StoreType', 'Assortment', 'CompetitionDistance', 'CompetitionOpenYearMonthInteger', 'AvgSalesForOpenDays', 'AvgCustomersForOpenDays', 'AvgSalesPerCustomerForOpenDays']
 
-# Find Closed Store IDs
-# closed_store_ids = test_df["Id"][test_df["Open"] == 0].values
-
-# Log Standardization ==> Better for RMSPE
-training_df['Sales'] = np.log1p(training_df['Sales'])
-
-features = ['Store', 'Day', 'Week', 'Month','Year','DayOfYear', 'DayOfWeek', 'Open', 'Promo', 'SchoolHoliday', 'StateHoliday', 'StoreType', 'Assortment', 'CompetitionDistance', 'CompetitionOpenInt', 'SalesPerDay', 'CustomersPerDay', 'SalesPerCustomersPerDay']
-
+# Fill NaN values with 0
 training_df = training_df.fillna(0)
 test_df = test_df.fillna(0)
 
@@ -186,11 +165,15 @@ print ("Completed Custom Preprocessing.")
 ################################################################
 
 def rmspe(y_true, y_pred):
-    w = np.zeros(y_true.shape, dtype=float)
-    index = y_true != 0
-    w[index] = 1.0/(y_true[index])
+    """
+    RMSPE =  sqrt(1/n * sum( ( (y_true - y_pred)/y_true) ** 2 ) )
+    """
+    # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
+    multiplying_factor = np.zeros(y_true.shape, dtype=float)
+    indices = y_true != 0
+    multiplying_factor[indices] = 1.0/(y_true[indices])
     diff = y_true - y_pred
-    diff_percentage = diff * w
+    diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
     rmspe = np.sqrt(np.mean( diff_percentage_squared ))
     return rmspe
@@ -200,35 +183,82 @@ def rmspe(y_true, y_pred):
 ################################################################
 
 """
-XGB Regression Model with log and exp standardization. Creates additional features for DayOfYear, CompetitionOpenInt, SalesPerDay, CustomersPerDay, SalesPerCustomersPerDay.
+XGB Regression Model with log and exp standardization. Creates additional features for DayOfYear, AvgSalesForOpenDays, CustomersPerDay, AvgSalesPerCustomerForOpenDays.
 
-Features: Store, Day, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenInt, SalesPerDay, CustomersPerDay, SalesPerCustomersPerDay
+Features: Store, DayOfMonth, Week, Month, Year, DayOfYear, DayOfWeek, Open, Promo, SchoolHoliday, StateHoliday, StoreType, Assortment, CompetitionDistance, CompetitionOpenYearMonthInteger, AvgSalesForOpenDays, AvgCustomersForOpenDays, AvgSalesPerCustomerForOpenDays
 """
 
-print("Training...")
+if (validate):
+    print("Performing validation.")
+    # validation using the last 6 weeks of training set as test data. We simulate the samples as close to the test data as possible
+    timeDelta = test_df.Date.max() - test_df.Date.min()
+    maxDate = training_df.Date.max()
+    minDate = maxDate - timeDelta
+    # indices is a list of boolean literals which are True when date is within the last 6 weeks.
+    indices = training_df["Date"].apply(lambda x: (x >= minDate and x<=maxDate))
+    # inverse indices flips True and False
+    inverse_indices = indices.apply(lambda x: (not x))
+    # This returns the training set values only when indices is True
+    y_test = training_df["Sales"][indices]
+    X_test = training_df[features][indices]
+    y_train = training_df["Sales"][inverse_indices]
+    X_train = training_df[features][inverse_indices]
 
-# Uncomment to train
-# regressor = XGBRegressor(n_estimators=3000, max_depth=12,
-#                          learning_rate=0.02, silent=True, 
-#                          subsample=0.9, colsample_bytree=0.7)
-# regressor.fit(np.array(training_df[features]), training_df["Sales"])
+    # Comment this block when not training
+    ################ TRAINING ###############
+    # print("Training...")
+    # regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
+    #                      learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+    # regressor.fit(np.array(X_train), y_train)
+    # with open("models/xgboostregressor6-validate.pkl", "wb") as fid:
+    #     pickle.dump(regressor, fid)
 
-# with open("models/xgboostregressor6.pkl", "wb") as fid:
-#     pickle.dump(regressor, fid)
+    # print("Model saved to models/xgboostregressor6-validate.pkl")
+    ########### TRAINING COMPLETED ##########
 
-# print("Model saved to models/xgboostregressor6.pkl")
+    # Uncomment this block when not training
+    with open("models/xgboostregressor6-validate.pkl", "rb") as fid:
+        regressor = pickle.load(fid)
 
-with open("models/xgboostregressor6.pkl", "rb") as fid:
-    regressor = pickle.load(fid)
+    print ("Loaded the model.")
+    
+    xgbPredict = regressor.predict(np.array(X_test))
+    result = pd.DataFrame({"Sales": np.expm1(xgbPredict), "True": np.expm1(y_test.values)})
+    result.to_csv("predictions/xgboostregressor6-validate.csv", index=False)
 
-print("Making predictions...")
-xgbPredict = regressor.predict(np.array(test_df[features]))
+    print("Predictions saved to predictions/xgboostregressor6-validate.csv.")
+    print ("RMSPE: " + str(rmspe(y_true = np.expm1(y_test.values), y_pred = np.expm1(xgbPredict))))
 
-result = pd.DataFrame({"Id": test_df["Id"], "Sales": np.expm1(xgbPredict)})
+else:
 
-result.to_csv("predictions/xgboostregressor6.csv", index=False)
+    X_train = training_df[features]
+    X_test = test_df[features]
+    y_train = training_df["Sales"]
 
-print("Predictions saved to predictions/xgboostregressor6.csv.")
+    # Comment this block when not training
+    ################ TRAINING ###############
+    print("Training...")
+    regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
+                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+    regressor.fit(np.array(X_train), y_train)
+    with open("models/xgboostregressor6.pkl", "wb") as fid:
+        pickle.dump(regressor, fid)
+
+    print("Model saved to models/xgboostregressor6.pkl")
+    ########### TRAINING COMPLETED ##########
+
+    # Uncomment this block when not training
+    # with open("models/xgboostregressor6.pkl", "rb") as fid:
+    #     regressor = pickle.load(fid)
+    # print ("Loaded the model.")
+
+    print("Making Predictions...")
+
+    xgbPredict = regressor.predict(np.array(X_test))
+    result = pd.DataFrame({"Id": test_df["Id"], "Sales": np.expm1(xgbPredict)})
+    result.to_csv("predictions/xgboostregressor6.csv", index=False)
+
+    print("Predictions saved to predictions/xgboostregressor6.csv.")
 
 # Show Feature Importance
 # mapper = {'f{0}'.format(i): v for i, v in enumerate(features)}
