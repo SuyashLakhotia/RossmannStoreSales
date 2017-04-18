@@ -46,7 +46,7 @@
     - Private Score: 0.12728, Public Score: 0.10754
     - Features: Store, DayOfWeek, Year, Month, DayOfMonth, Open, Promo, StateHoliday, SchoolHoliday, StoreType, Assortment, CompetitionDistance, Promo2
 - `xgboostensemble.py`
-    - Private Score: 0.11381, Public Score: 0.10462
+    - Private Score: 0.11880, Public Score: 0.10648
     - Models: xgboostregressor6, xgboostregressor-log
 - `simplemedian.py`
     - Private Score: 0.14598, Public Score: 0.14001

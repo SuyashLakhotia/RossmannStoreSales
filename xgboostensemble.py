@@ -1,6 +1,6 @@
 """
 Current Best Result:
-Private Score: 0.11381, Public Score: 0.10462, i = 0.675, j = 0.950
+- Private Score: 0.11880, Public Score: 0.10648, i = 0.67, j = 0.970
 
 Past Results:
 - Private Score: 0.12057, Public Score: 0.10934, i = 0.75, j = 0.99
@@ -8,7 +8,6 @@ Past Results:
 - Private Score: 0.11919, Public Score: 0.10514, i = 0.5, j = 0.975
 - Private Score: 0.11904, Public Score: 0.10527, i = 0.5, j = 0.970
 - Private Score: 0.11882, Public Score: 0.10616, i = 0.65, j = 0.970
-- Private Score: 0.11880, Public Score: 0.10648, i = 0.67, j = 0.970
 """
 
 import pandas as pd
@@ -84,15 +83,21 @@ if (determineBestWeights):
 		for j in np.arange(0.9, 1.0, 0.005): 
 			y_pred = (sales_model1 * i + sales_model2 * (1.0-i)) * j
 			rmspeValue = rmspe(y_true, y_pred)
-			rmspeDict[rmspeValue] = [i, j]
+			weightTuple = (i,j)
+			rmspeDict[weightTuple] = rmspeValue
 
-	minRMSPE = min(rmspeDict.keys())
-	bestRatios = [minRMSPE, rmspeDict[minRMSPE]]
+	minRMSPE = min(rmspeDict.values())
+	weight_correction = []
+	for key, value in rmspeDict.items():
+		if value == minRMSPE:
+			weight_correction = key
+			break
+	bestRatios = [minRMSPE, weight_correction]
 	print ("Minimum RMSPE Score = " + str(bestRatios))
 else:
 	# Predictions using static combining
-	i = 0.675
-	j = 0.95
+	i = 0.67
+	j = 0.97
 	sales = (sales_model1 * i + sales_model2 * (1.0-i)) * j
 
 	result = pd.DataFrame({"Id": model2["Id"], "Sales": sales})
