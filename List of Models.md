@@ -48,6 +48,12 @@
 - `xgboostensemble.py`
     - Private Score: 0.11880, Public Score: 0.10648
     - Models: xgboostregressor6, xgboostregressor-log
+- `randomforestregression-independent-log.py`
+    - Private Score: 0.14536, Public Score: 0.13748
+    - Features: Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), AvgCustStore, AvgCustStoreMonth
+- `randomforestregression-single2.py`
+    - Private Score: 0.14726, Public Score: 0.14016
+    - Features: Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), AvgCustStore, AvgCustStoreMonth
 - `simplemedian.py`
     - Private Score: 0.14598, Public Score: 0.14001
     - Features: Store, DayOfWeek, Promo
