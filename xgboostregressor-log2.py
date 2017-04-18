@@ -154,14 +154,14 @@ regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
                          learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
 regressor.fit(np.array(training_df[features]), training_df["Sales"])
 
-with open("models/xgboostregressor3.pkl", "wb") as fid:
+with open("models/xgboostregressor-log2.pkl", "wb") as fid:
     pickle.dump(regressor, fid)
 
-print("Model saved to models/xgboostregressor3.pkl")
+print("Model saved to models/xgboostregressor-log2.pkl")
 ########### TRAINING COMPLETED ##########
 
 # Uncomment this block when not training
-# with open("models/xgboostregressor3.pkl", "rb") as fid:
+# with open("models/xgboostregressor-log2.pkl", "rb") as fid:
 #     regressor = pickle.load(fid)
 # print ("Loaded the model.")
 
@@ -178,7 +178,7 @@ for i in test_df["Id"].tolist():
         predictions += [[i, prediction]]
 
 # Using the csv library to save the file
-with open("predictions/xgboostregressor3.csv", "w") as f:
+with open("predictions/xgboostregressor-log2.csv", "w") as f:
     csv_writer = csv.writer(f, lineterminator="\n")
     csv_writer.writerow(["Id", "Sales"])
     csv_writer.writerows(predictions)

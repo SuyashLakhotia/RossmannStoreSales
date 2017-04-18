@@ -27,10 +27,10 @@ if (len(sys.argv) > 1) and (sys.argv[1] == "determine-best-weights"):
 ################################################################
 
 if determineBestWeights:
-	file1 = "predictions/xgboostregressor6-validate.csv"
+	file1 = "predictions/xgboostregressor-log5-validate.csv"
 	file2 = "predictions/xgboostregressor-log-validate.csv"
 else:
-	file1 = "predictions/xgboostregressor6.csv"
+	file1 = "predictions/xgboostregressor-log5.csv"
 	file2 = "predictions/xgboostregressor-log.csv"
 
 model1 = pd.read_csv(file1)
