@@ -199,4 +199,4 @@ predictions = predictions.append(Series(0, index=closed_store_ids))
 submission = pd.DataFrame({"Id": predictions.index, "Sales": predictions.values})
 submission.to_csv("predictions/linearregression6.csv", index=False)
 
-# print("Predictions saved.")
+print("Predictions saved.")
