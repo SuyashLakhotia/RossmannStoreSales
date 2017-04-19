@@ -22,6 +22,7 @@ validate = False
 if (len(sys.argv) > 1) and (sys.argv[1] == "validate"):
     validate = True
 
+
 ################################################################
 # Import CSV Data into Pandas DataFrames                       #
 ################################################################
@@ -29,6 +30,7 @@ if (len(sys.argv) > 1) and (sys.argv[1] == "validate"):
 training_df = pd.read_csv("data/train.csv", parse_dates=[2])
 store_df = pd.read_csv("data/store.csv")
 test_df = pd.read_csv("data/test.csv", parse_dates=[3])
+
 # print(training_df.head())
 # print(store_df.head())
 # print(test_df.head())
@@ -193,6 +195,7 @@ def rmspe(y_true, y_pred):
     rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
+
 ################################################################
 # Training the Model & Predicting Sales                        #
 ################################################################
@@ -204,7 +207,6 @@ Features: Store, DayOfWeek, Year, Month, DayOfMonth, Open, Promo, SchoolHoliday,
 """
 
 if (validate):
-
     # validation using the last 6 weeks of training set as test data. We simulate the samples as close to the test data as possible
     timeDelta = test_df.Date.max() - test_df.Date.min()
     maxDate = training_df.Date.max()
@@ -234,8 +236,7 @@ if (validate):
     # Uncomment this block when not training
     # with open("models/xgboostregressor-log4-cv.pkl", "rb") as fid:
     #     regressor = pickle.load(fid)
-
-    print("Loaded the model.")
+    # print("Loaded the model.")
 
     xgbPredict = regressor.predict(np.array(X_test))
     result = pd.DataFrame({"Sales": np.expm1(xgbPredict), "True": np.expm1(y_test.values)})
@@ -245,7 +246,6 @@ if (validate):
 
     print("RMSPE: " + str(rmspe(y_true=np.expm1(y_test.values), y_pred=np.expm1(xgbPredict))))
 else:
-
     X_train = training_df[features]
     X_test = test_df[features]
     y_train = training_df["Sales"]
@@ -265,9 +265,9 @@ else:
     # Uncomment this block when not training
     # with open("models/xgboostregressor-log4.pkl", "rb") as fid:
     #     regressor = pickle.load(fid)
-    # print ("Loaded the model.")
+    # print("Loaded the model.")
 
-    # print("Making Predictions...")
+    print("Making Predictions...")
 
     xgbPredict = regressor.predict(np.array(X_test))
     result = pd.DataFrame({"Id": test_df["Id"], "Sales": np.expm1(xgbPredict)})
@@ -276,7 +276,7 @@ else:
     print("Predictions saved to predictions/xgboostregressor-log4.csv.")
 
 # Uncomment this section to show the feature importance chart
-mapper = {'f{0}'.format(i): v for i, v in enumerate(features)}
-mapped = {mapper[k]: v for k, v in regressor.booster().get_score(importance_type='weight').items()}
-plot_importance(mapped)
-plt.show()
+# mapper = {'f{0}'.format(i): v for i, v in enumerate(features)}
+# mapped = {mapper[k]: v for k, v in regressor.booster().get_score(importance_type='weight').items()}
+# plot_importance(mapped)
+# plt.show()

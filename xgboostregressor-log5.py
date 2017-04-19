@@ -20,6 +20,7 @@ validate = False
 if (len(sys.argv) > 1) and (sys.argv[1] == "validate"):
     validate = True
 
+
 ################################################################
 # Import CSV Data into Pandas DataFrames                       #
 ################################################################
@@ -180,6 +181,7 @@ def rmspe(y_true, y_pred):
     rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
+
 ################################################################
 # Training the Model & Predicting Sales                        #
 ################################################################
@@ -227,7 +229,6 @@ if (validate):
     # Uncomment this block when not training
     with open("models/xgboostregressor-log5-validate.pkl", "rb") as fid:
         regressor = pickle.load(fid)
-
     print("Loaded the model.")
 
     xgbPredict = regressor.predict(np.array(X_test))
@@ -238,7 +239,6 @@ if (validate):
     print("RMSPE: " + str(rmspe(y_true=np.expm1(y_test.values), y_pred=np.expm1(xgbPredict))))
 
 else:
-
     X_train = training_df[features]
     X_test = test_df[features]
     y_train = training_df["Sales"]
@@ -258,7 +258,7 @@ else:
     # Uncomment this block when not training
     # with open("models/xgboostregressor-log5.pkl", "rb") as fid:
     #     regressor = pickle.load(fid)
-    # print ("Loaded the model.")
+    # print("Loaded the model.")
 
     print("Making Predictions...")
 

@@ -115,6 +115,7 @@ for f in training_df[features]:
         training_df[f] = labels.transform(list(training_df[f].values))
         test_df[f] = labels.transform(list(test_df[f].values))
 
+
 ################################################################
 # RMSPE Function                                               #
 ################################################################
@@ -132,6 +133,7 @@ def rmspe(y_true, y_pred):
     diff_percentage_squared = diff_percentage ** 2
     rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
+
 
 ################################################################
 # Training the Model & Predicting Sales                        #
@@ -166,7 +168,6 @@ print("Model saved to models/xgboostregressor2.pkl")
 # Uncomment this section to load from an existing model
 # with open("models/xgboostregressor2.pkl", "rb") as fid:
 #     regressor = pickle.load(fid)
-
 # print("Model loaded.")
 
 print("Making Predictions...")

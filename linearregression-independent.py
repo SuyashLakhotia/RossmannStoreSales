@@ -129,6 +129,7 @@ def rmspe(y_true, y_pred):
     rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
+
 ################################################################
 # Training the Model & Predicting Sales                        #
 ################################################################

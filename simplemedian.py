@@ -81,6 +81,7 @@ test_df["Open"][is_nan(test_df["Open"])] = (test_df["DayOfWeek"] != 7).astype(in
 
 # Any custom data processing goes here.
 
+
 ################################################################
 # Training the Model & Predicting Sales                        #
 ################################################################

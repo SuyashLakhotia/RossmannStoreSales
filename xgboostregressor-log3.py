@@ -16,6 +16,7 @@ from sklearn.preprocessing import LabelEncoder
 
 pd.options.mode.chained_assignment = None
 
+
 ################################################################
 # Import CSV Data into Pandas DataFrames                       #
 ################################################################
@@ -157,6 +158,7 @@ def rmspe(y_true, y_pred):
     diff_percentage_squared = diff_percentage ** 2
     rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
+
 
 ################################################################
 # Training the Model & Predicting Sales                        #

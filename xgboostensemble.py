@@ -22,6 +22,7 @@ determineBestWeights = False
 if (len(sys.argv) > 1) and (sys.argv[1] == "determine-best-weights"):
     determineBestWeights = True
 
+
 ################################################################
 # Import CSV Data into Pandas DataFrames                       #
 ################################################################
@@ -35,6 +36,7 @@ else:
 
 model1 = pd.read_csv(file1)
 model2 = pd.read_csv(file2)
+
 
 ################################################################
 # Process Data                                                 #
@@ -63,8 +65,9 @@ def rmspe(y_true, y_pred):
     rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
+
 ################################################################
-# Making predictions                                  		   #
+# Making Predictions                                  		   #
 ################################################################
 """
 This model ensembles two xgboost models using static combination with weighted averages.
