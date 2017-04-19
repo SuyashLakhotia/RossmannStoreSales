@@ -18,7 +18,7 @@ pd.options.mode.chained_assignment = None
 
 validate = False
 
-# Run the script with validate as argument for validation (```python xgboostregressor-log4.py validate```) 
+# Run the script with validate as argument for validation (```python xgboostregressor-log4.py validate```)
 if (len(sys.argv) > 1) and (sys.argv[1] == "validate"):
     validate = True
 
@@ -119,24 +119,24 @@ test_df["WeekOfYear"] = test_df.Date.dt.weekofyear
 
 # Computing CompetitionOpenInterval
 training_df["CompetitionOpenInterval"] = 12 * (training_df.Year - training_df.CompetitionOpenSinceYear) + \
-        (training_df.Month - training_df.CompetitionOpenSinceMonth)
+    (training_df.Month - training_df.CompetitionOpenSinceMonth)
 test_df["CompetitionOpenInterval"] = 12 * (test_df.Year - test_df.CompetitionOpenSinceYear) + \
-        (test_df.Month - test_df.CompetitionOpenSinceMonth)
+    (test_df.Month - test_df.CompetitionOpenSinceMonth)
 
 # Computing PromoOpenInterval
 training_df['PromoOpenInterval'] = 12 * (training_df.Year - training_df.Promo2SinceYear) + \
-        (training_df.WeekOfYear - training_df.Promo2SinceWeek) / 4.0
+    (training_df.WeekOfYear - training_df.Promo2SinceWeek) / 4.0
 training_df['PromoOpenInterval'] = training_df.PromoOpenInterval.apply(lambda x: x if x > 0 else 0)
 training_df.loc[training_df.Promo2SinceYear == 0, 'PromoOpenInterval'] = 0
 
 test_df['PromoOpenInterval'] = 12 * (test_df.Year - test_df.Promo2SinceYear) + \
-        (test_df.WeekOfYear - test_df.Promo2SinceWeek) / 4.0
+    (test_df.WeekOfYear - test_df.Promo2SinceWeek) / 4.0
 test_df['PromoOpenInterval'] = test_df.PromoOpenInterval.apply(lambda x: x if x > 0 else 0)
 test_df.loc[test_df.Promo2SinceYear == 0, 'PromoOpenInterval'] = 0
 
 # Computing IsPromoMonth
-monthStringMap = {1:'Jan', 2:'Feb', 3:'Mar', 4:'Apr', 5:'May', 6:'Jun', \
-             7:'Jul', 8:'Aug', 9:'Sept', 10:'Oct', 11:'Nov', 12:'Dec'}
+monthStringMap = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun',
+                  7: 'Jul', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
 
 training_df['MonthAsString'] = training_df.Month.map(monthStringMap)
 training_df.loc[training_df.PromoInterval == 0, 'PromoInterval'] = ''
@@ -186,11 +186,11 @@ def rmspe(y_true, y_pred):
     # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
     multiplying_factor = np.zeros(y_true.shape, dtype=float)
     indices = y_true != 0
-    multiplying_factor[indices] = 1.0/(y_true[indices])
+    multiplying_factor[indices] = 1.0 / (y_true[indices])
     diff = y_true - y_pred
     diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 ################################################################
@@ -210,7 +210,7 @@ if (validate):
     maxDate = training_df.Date.max()
     minDate = maxDate - timeDelta
     # indices is a list of boolean literals which are True when date is within the last 6 weeks.
-    indices = training_df["Date"].apply(lambda x: (x >= minDate and x<=maxDate))
+    indices = training_df["Date"].apply(lambda x: (x >= minDate and x <= maxDate))
     # inverse indices flips True and False
     inverse_indices = indices.apply(lambda x: (not x))
     # This returns the training set values only when indices is True
@@ -223,7 +223,7 @@ if (validate):
     ################ TRAINING ###############
     print("Training...")
     regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
-                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+                             learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
     regressor.fit(np.array(X_train), y_train)
     with open("models/xgboostregressor-log4-cv.pkl", "wb") as fid:
         pickle.dump(regressor, fid)
@@ -235,7 +235,7 @@ if (validate):
     # with open("models/xgboostregressor-log4-cv.pkl", "rb") as fid:
     #     regressor = pickle.load(fid)
 
-    print ("Loaded the model.")
+    print("Loaded the model.")
 
     xgbPredict = regressor.predict(np.array(X_test))
     result = pd.DataFrame({"Sales": np.expm1(xgbPredict), "True": np.expm1(y_test.values)})
@@ -243,7 +243,7 @@ if (validate):
 
     print("Predictions saved to predictions/xgboostregressor-log4-cv.csv.")
 
-    print ("RMSPE: " + str(rmspe(y_true = np.expm1(y_test.values), y_pred = np.expm1(xgbPredict))))
+    print("RMSPE: " + str(rmspe(y_true=np.expm1(y_test.values), y_pred=np.expm1(xgbPredict))))
 else:
 
     X_train = training_df[features]
@@ -254,7 +254,7 @@ else:
     ################ TRAINING ###############
     print("Training...")
     regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
-                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+                             learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
     regressor.fit(np.array(X_train), y_train)
     with open("models/xgboostregressor-log4.pkl", "wb") as fid:
         pickle.dump(regressor, fid)

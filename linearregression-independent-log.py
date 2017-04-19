@@ -132,6 +132,7 @@ test_df = pd.merge(test_df, avg_cust_month, on=["Store", "Month"])
 # Drop "Customers" from training_df
 training_df.drop(["Customers"], axis=1, inplace=True)
 
+
 ################################################################
 # RMSPE Function                                               #
 ################################################################
@@ -139,11 +140,11 @@ training_df.drop(["Customers"], axis=1, inplace=True)
 def rmspe(y_true, y_pred):
     w = np.zeros(y_pred.shape, dtype=float)
     index = y_pred != 0
-    w[index] = 1.0/(y_pred[index]**2)
+    w[index] = 1.0 / (y_pred[index]**2)
     diff = y_pred - y_true
     diff_squared = diff ** 2
     diff_percentage_squared = diff_squared * w
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 
@@ -177,7 +178,7 @@ for i in test_dict:
 
     X_train = store.drop(["Sales", "Store"], axis=1)
     Y_train = store["Sales"]
-    Y_train = np.log(Y_train+1)
+    Y_train = np.log(Y_train + 1)
     X_test = test_dict[i].copy()
 
     # X_tr, X_te, Y_tr, Y_te = train_test_split(X_train, Y_train, test_size=0.4)
@@ -195,7 +196,7 @@ for i in test_dict:
     lreg.fit(X_train, Y_train)
     Y_pred = lreg.predict(X_test)
 
-    Y_pred = np.exp(Y_pred)-1
+    Y_pred = np.exp(Y_pred) - 1
 
     predictions = predictions.append(Series(Y_pred, index=store_ids))
 

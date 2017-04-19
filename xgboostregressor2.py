@@ -126,11 +126,11 @@ def rmspe(y_true, y_pred):
     # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
     multiplying_factor = np.zeros(y_true.shape, dtype=float)
     indices = y_true != 0
-    multiplying_factor[indices] = 1.0/(y_true[indices])
+    multiplying_factor[indices] = 1.0 / (y_true[indices])
     diff = y_true - y_pred
     diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 ################################################################
@@ -153,7 +153,7 @@ print("Making predictions...")
 
 ################ TRAINING ###############
 regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
-                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+                         learning_rate = 0.02, silent = True, subsample = 0.9, colsample_bytree = 0.7)
 regressor.fit(np.array(training_df[features]), training_df["Sales"])
 
 # The model is pickled and saved to a file. The file can be loaded later to retrieve the object.
@@ -169,13 +169,13 @@ print("Model saved to models/xgboostregressor2.pkl")
 
 # print("Model loaded.")
 
-print ("Making Predictions...")
+print("Making Predictions...")
 
-xgbPredict = regressor.predict(np.array(test_df[features]))
+xgbPredict=regressor.predict(np.array(test_df[features]))
 
-result = pd.DataFrame({"Id": test_df["Id"], "Sales": xgbPredict})
+result=pd.DataFrame({"Id": test_df["Id"], "Sales": xgbPredict})
 
-result.to_csv("predictions/xgboostregressor2.csv", index=False)
+result.to_csv("predictions/xgboostregressor2.csv", index = False)
 
 print("Predictions saved to predictions/xgboostregressor2.csv.")
 

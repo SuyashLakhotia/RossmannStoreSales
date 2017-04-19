@@ -27,6 +27,7 @@ test_df = pd.read_csv("data/test.csv", dtype={"StateHoliday": pd.np.string_})
 # print(store_df.head())
 # print(test_df.head())
 
+
 ################################################################
 # Process Data (Universal)                                     #
 ################################################################
@@ -124,8 +125,8 @@ training_df = pd.merge(training_df, avg_cust_month, on=["Store", "Month"])
 test_df = pd.merge(test_df, avg_cust, on=["Store"])
 test_df = pd.merge(test_df, avg_cust_month, on=["Store", "Month"])
 
-# Log factorization of Sales changes the distribution and makes the performance much better 
-training_df['Sales'] = np.log(training_df['Sales']+1)
+# Log factorization of Sales changes the distribution and makes the performance much better
+training_df['Sales'] = np.log(training_df['Sales'] + 1)
 
 # List of features to be used in the model
 features = ["Store", "DayOfWeek", "Year", "Month", "DayOfMonth", "Open", "Promo", "StateHoliday", "SchoolHoliday", "StoreType", "Assortment", "CompetitionDistance", "Promo2", "AvgCustStore", "AvgCustStoreMonth"]
@@ -150,11 +151,11 @@ def rmspe(y_true, y_pred):
     # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
     multiplying_factor = np.zeros(y_true.shape, dtype=float)
     indices = y_true != 0
-    multiplying_factor[indices] = 1.0/(y_true[indices])
+    multiplying_factor[indices] = 1.0 / (y_true[indices])
     diff = y_true - y_pred
     diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 ################################################################
@@ -194,7 +195,7 @@ for i in test_df["Id"].tolist():
         predictions += [[i, 0]]
     else:
         # Appending prediction for open stores
-        prediction = np.exp(regressor.predict(np.array(test_df[test_df["Id"] == i][features]))[0])-1
+        prediction = np.exp(regressor.predict(np.array(test_df[test_df["Id"] == i][features]))[0]) - 1
         predictions += [[i, prediction]]
 
 # Using the csv library to save the file

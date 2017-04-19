@@ -93,7 +93,6 @@ Features: Store, DayOfWeek, Promo
 
 Assumptions:
 - The only factors that significantly affect the sales in a particular store are "DayOfWeek" & "Promo".
-- The geometric mean value is used instead of a model to provide a benchmark for models using ["Store", "DayOfWeek", "Promo"].
 """
 
 columns = ["Store", "DayOfWeek", "Promo"]

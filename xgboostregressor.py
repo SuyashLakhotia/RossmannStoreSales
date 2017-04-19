@@ -127,11 +127,11 @@ def rmspe(y_true, y_pred):
     # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
     multiplying_factor = np.zeros(y_true.shape, dtype=float)
     indices = y_true != 0
-    multiplying_factor[indices] = 1.0/(y_true[indices])
+    multiplying_factor[indices] = 1.0 / (y_true[indices])
     diff = y_true - y_pred
     diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 ################################################################
@@ -157,7 +157,7 @@ test_dict = dict(list(test_df.groupby("Store")))
 predictions = Series()
 
 regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
-learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
 for i in test_dict:
     store = training_dict[i]
 

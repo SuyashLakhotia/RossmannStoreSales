@@ -18,7 +18,7 @@ pd.options.mode.chained_assignment = None
 
 validate = False
 
-# Run the script with validate as argument for validation (```python xgboostregressor-log.py validate```) 
+# Run the script with validate as argument for validation (```python xgboostregressor-log.py validate```)
 if (len(sys.argv) > 1) and (sys.argv[1] == "validate"):
     validate = True
 
@@ -113,7 +113,7 @@ test_df = test_df.fillna(0)
 # Using only Open Stores for training
 training_df = training_df[training_df["Open"] == 1]
 
-# Log factorization of Sales changes the distribution and makes the performance much better 
+# Log factorization of Sales changes the distribution and makes the performance much better
 training_df['Sales'] = np.log1p(training_df['Sales'])
 
 # List of features used in training
@@ -127,6 +127,7 @@ for f in training_df[features]:
         training_df[f] = labels.transform(list(training_df[f].values))
         test_df[f] = labels.transform(list(test_df[f].values))
 
+
 ################################################################
 # RMSPE Function                                               #
 ################################################################
@@ -138,11 +139,11 @@ def rmspe(y_true, y_pred):
     # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
     multiplying_factor = np.zeros(y_true.shape, dtype=float)
     indices = y_true != 0
-    multiplying_factor[indices] = 1.0/(y_true[indices])
+    multiplying_factor[indices] = 1.0 / (y_true[indices])
     diff = y_true - y_pred
     diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 ################################################################
@@ -166,7 +167,7 @@ if (validate):
     maxDate = training_df.Date.max()
     minDate = maxDate - timeDelta
     # indices is a list of boolean literals which are True when date is within the last 6 weeks.
-    indices = training_df["Date"].apply(lambda x: (x >= minDate and x<=maxDate))
+    indices = training_df["Date"].apply(lambda x: (x >= minDate and x <= maxDate))
     # inverse indices flips True and False
     inverse_indices = indices.apply(lambda x: (not x))
     # This returns the training set values only when indices is True
@@ -179,7 +180,7 @@ if (validate):
     ################ TRAINING ###############
     print("Training...")
     regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
-                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+                             learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
     regressor.fit(np.array(X_train), y_train)
     with open("models/xgboostregressor-log-validate.pkl", "wb") as fid:
         pickle.dump(regressor, fid)
@@ -199,7 +200,7 @@ if (validate):
 
     print("Predictions saved to predictions/xgboostregressor-log-validate.csv.")
 
-    print ("RMSPE: " + str(rmspe(y_true = np.expm1(y_test.values), y_pred = np.expm1(xgbPredict))))
+    print("RMSPE: " + str(rmspe(y_true=np.expm1(y_test.values), y_pred=np.expm1(xgbPredict))))
 else:
 
     X_train = training_df[features]
@@ -210,7 +211,7 @@ else:
     ################ TRAINING ###############
     print("Training...")
     regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
-                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+                             learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
     regressor.fit(np.array(X_train), y_train)
     with open("models/xgboostregressor-log.pkl", "wb") as fid:
         pickle.dump(regressor, fid)

@@ -168,7 +168,7 @@ A random forest regression model for all stores.
 Features: Store, Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), CompetitionDistance, StoreType (one-hot encoded), Assortment (one-hot encoded), AvgCustStore, AvgCustStoreMonth, AvgCustStoreYear
 
 Assumptions:
-- Stores not in the test data will not affect the values for other stores in the test data.
+- Stores that are not in the test data will not affect the values for other stores in the test data.
 - The store's opening/closing dates does not affect the store's performance. For example, a store that was closed yesterday will not get more sales today because of that.
 - The competition of each store will affect it consistently, hence, it does not matter when the competition started.
 """

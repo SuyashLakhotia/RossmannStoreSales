@@ -16,7 +16,7 @@ pd.options.mode.chained_assignment = None
 
 validate = False
 
-# Run the script with validate as argument for validation (```python xgboostregressor-log5.py validate```) 
+# Run the script with validate as argument for validation (```python xgboostregressor-log5.py validate```)
 if (len(sys.argv) > 1) and (sys.argv[1] == "validate"):
     validate = True
 
@@ -27,6 +27,7 @@ if (len(sys.argv) > 1) and (sys.argv[1] == "validate"):
 training_df = pd.read_csv("data/train.csv", parse_dates=[2])
 store_df = pd.read_csv("data/store.csv")
 test_df = pd.read_csv("data/test.csv", parse_dates=[3])
+
 
 ################################################################
 # Process Data (Universal)                                     #
@@ -92,22 +93,21 @@ store_df["CompetitionOpenSinceMonth"][(store_df["CompetitionDistance"] != 0) & (
 # Process Data (Custom)                                        #
 ################################################################
 
-print ("Starting Custom Preprocessing.")
+print("Starting Custom Preprocessing.")
 
 # Computation for AvgSales, AvgCustomers, AvgSalesPerCustomer
 totalSalesPerStore = training_df.groupby([training_df['Store']])['Sales'].sum()
 totalCustomersPerStore = training_df.groupby([training_df['Store']])['Customers'].sum()
 numberOfOpenStores = training_df.groupby([training_df['Store']])['Open'].count()
 
-# Average Sales for Open Days 
+# Average Sales for Open Days
 AvgSales = totalSalesPerStore / numberOfOpenStores
 AvgCustomers = totalCustomersPerStore / numberOfOpenStores
-AvgSalesPerCustomer = AvgSales /AvgCustomers
+AvgSalesPerCustomer = AvgSales / AvgCustomers
 
 store_df = pd.merge(store_df, AvgSales.reset_index(name='AvgSales'), how='left', on=['Store'])
 store_df = pd.merge(store_df, AvgCustomers.reset_index(name='AvgCustomers'), how='left', on=['Store'])
 store_df = pd.merge(store_df, AvgSalesPerCustomer.reset_index(name='AvgSalesPerCustomer'), how='left', on=['Store'])
-
 
 # Merging store with training and test data frames
 training_df = pd.merge(training_df, store_df, on="Store", how="left")
@@ -141,8 +141,9 @@ test_df['StoreType'] = test_df['StoreType'].astype('category').cat.codes
 # Log Standardization ==> Better for RMSPE
 training_df['Sales'] = np.log1p(training_df['Sales'])
 
-# Helper function to create CompetitionOpenYearMonthInteger
+
 def yearMonthGenerator(df):
+    # Helper function to create CompetitionOpenYearMonthInteger
     try:
         date = '{}-{}'.format(int(df['CompetitionOpenSinceYear']), int(df['CompetitionOpenSinceMonth']))
         return pd.to_datetime(date)
@@ -152,13 +153,14 @@ def yearMonthGenerator(df):
 training_df['CompetitionOpenYearMonthInteger'] = pd.to_numeric(training_df.apply(lambda df: yearMonthGenerator(df), axis=1), errors="coerce")
 test_df['CompetitionOpenYearMonthInteger'] = pd.to_numeric(test_df.apply(lambda df: yearMonthGenerator(df), axis=1), errors="coerce")
 
-features = ['Store', 'DayOfMonth', 'Week', 'Month','Year','DayOfYear', 'DayOfWeek', 'Open', 'Promo', 'SchoolHoliday', 'StateHoliday', 'StoreType', 'Assortment', 'CompetitionDistance', 'CompetitionOpenYearMonthInteger', 'AvgSales', 'AvgCustomers', 'AvgSalesPerCustomer']
+features = ['Store', 'DayOfMonth', 'Week', 'Month', 'Year', 'DayOfYear', 'DayOfWeek', 'Open', 'Promo', 'SchoolHoliday', 'StateHoliday', 'StoreType', 'Assortment', 'CompetitionDistance', 'CompetitionOpenYearMonthInteger', 'AvgSales', 'AvgCustomers', 'AvgSalesPerCustomer']
 
 # Fill NaN values with 0
 training_df = training_df.fillna(0)
 test_df = test_df.fillna(0)
 
-print ("Completed Custom Preprocessing.")
+print("Completed Custom Preprocessing")
+
 
 ################################################################
 # RMSPE Function                                               #
@@ -171,11 +173,11 @@ def rmspe(y_true, y_pred):
     # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
     multiplying_factor = np.zeros(y_true.shape, dtype=float)
     indices = y_true != 0
-    multiplying_factor[indices] = 1.0/(y_true[indices])
+    multiplying_factor[indices] = 1.0 / (y_true[indices])
     diff = y_true - y_pred
     diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 ################################################################
@@ -201,7 +203,7 @@ if (validate):
     maxDate = training_df.Date.max()
     minDate = maxDate - timeDelta
     # indices is a list of boolean literals which are True when date is within the last 6 weeks.
-    indices = training_df["Date"].apply(lambda x: (x >= minDate and x<=maxDate))
+    indices = training_df["Date"].apply(lambda x: (x >= minDate and x <= maxDate))
     # inverse indices flips True and False
     inverse_indices = indices.apply(lambda x: (not x))
     # This returns the training set values only when indices is True
@@ -226,14 +228,14 @@ if (validate):
     with open("models/xgboostregressor-log5-validate.pkl", "rb") as fid:
         regressor = pickle.load(fid)
 
-    print ("Loaded the model.")
-    
+    print("Loaded the model.")
+
     xgbPredict = regressor.predict(np.array(X_test))
     result = pd.DataFrame({"Sales": np.expm1(xgbPredict), "True": np.expm1(y_test.values)})
     result.to_csv("predictions/xgboostregressor-log5-validate.csv", index=False)
 
     print("Predictions saved to predictions/xgboostregressor-log5-validate.csv.")
-    print ("RMSPE: " + str(rmspe(y_true = np.expm1(y_test.values), y_pred = np.expm1(xgbPredict))))
+    print("RMSPE: " + str(rmspe(y_true=np.expm1(y_test.values), y_pred=np.expm1(xgbPredict))))
 
 else:
 
@@ -245,7 +247,7 @@ else:
     ################ TRAINING ###############
     print("Training...")
     regressor = XGBRegressor(n_estimators=3000, nthread=-1, max_depth=12,
-                         learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
+                             learning_rate=0.02, silent=True, subsample=0.9, colsample_bytree=0.7)
     regressor.fit(np.array(X_train), y_train)
     with open("models/xgboostregressor-log5.pkl", "wb") as fid:
         pickle.dump(regressor, fid)

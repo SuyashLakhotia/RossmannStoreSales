@@ -102,8 +102,8 @@ test_df = test_df.fillna(0)
 # Selecting only open stores
 training_df = training_df[training_df["Open"] == 1]
 
-# Log factorization of Sales changes the distribution and makes the performance much better 
-training_df['Sales'] = np.log(training_df['Sales']+1)
+# Log factorization of Sales changes the distribution and makes the performance much better
+training_df['Sales'] = np.log(training_df['Sales'] + 1)
 
 # List of features to be used
 features = ["Store", "Year", "Month", "YearMonth", "Open", "Promo", "SchoolHoliday", "CompetitionDistance", "Promo2", "CompetitionOpenSinceYear", "StateHoliday", "DayOfWeek", "StateHolidayBinary", "StoreType", "Assortment"]
@@ -128,11 +128,11 @@ def rmspe(y_true, y_pred):
     # multiplying_factor = 1/y_true when y_true != 0, else multiplying_factor = 0
     multiplying_factor = np.zeros(y_true.shape, dtype=float)
     indices = y_true != 0
-    multiplying_factor[indices] = 1.0/(y_true[indices])
+    multiplying_factor[indices] = 1.0 / (y_true[indices])
     diff = y_true - y_pred
     diff_percentage = diff * multiplying_factor
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 ################################################################
@@ -174,7 +174,7 @@ for i in test_df["Id"].tolist():
         predictions += [[i, 0]]
     else:
         # Appending prediction for open stores
-        prediction = np.exp(regressor.predict(np.array(test_df[test_df["Id"] == i][features]))[0])-1
+        prediction = np.exp(regressor.predict(np.array(test_df[test_df["Id"] == i][features]))[0]) - 1
         predictions += [[i, prediction]]
 
 # Using the csv library to save the file

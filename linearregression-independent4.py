@@ -140,11 +140,11 @@ training_df.drop(["Customers"], axis=1, inplace=True)
 def rmspe(y_true, y_pred):
     w = np.zeros(y_true.shape, dtype=float)
     index = y_true != 0
-    w[index] = 1.0/(y_true[index])
+    w[index] = 1.0 / (y_true[index])
     diff = y_true - y_pred
     diff_percentage = diff * w
     diff_percentage_squared = diff_percentage ** 2
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 ################################################################
@@ -157,7 +157,7 @@ Treating each store as an independent regression problem, loop through all store
 Features: Promo, SchoolHoliday, Year, Month, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded), AvgCustStore, AvgCustStoreMonth
 
 Assumptions:
-- Stores not in the test data will not affect the performance for stores in the test data.
+- Stores that are not in the test data will not affect the values for other stores in the test data.
 - The store's opening/closing dates does not affect the store's performance. For example, a store that was closed yesterday will not get more sales today because of that.
 - The competition of each store will affect it consistently, hence, it does not matter.
 - Each store's sales value is independent of the other stores and can be treated as independent regression problems.

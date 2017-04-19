@@ -134,6 +134,7 @@ training_df.drop(["Customers"], axis=1, inplace=True)
 # only consider values for the same months as in the data set
 training_df["Month"].between(8, 9, inclusive=True)
 
+
 ################################################################
 # RMSPE Function                                               #
 ################################################################
@@ -176,7 +177,7 @@ for i in test_dict:
 
     X_train = store.drop(["Sales", "Store"], axis=1)
     Y_train = store["Sales"]
-    Y_train = np.log(Y_train+1)
+    Y_train = np.log(Y_train + 1)
     X_test = test_dict[i].copy()
 
     # X_tr, X_te, Y_tr, Y_te = train_test_split(X_train, Y_train, test_size=0.4)
@@ -194,7 +195,7 @@ for i in test_dict:
     randforestreg.fit(X_train, Y_train)
     Y_pred = randforestreg.predict(X_test)
 
-    Y_pred = np.exp(Y_pred)-1
+    Y_pred = np.exp(Y_pred) - 1
 
     predictions = predictions.append(Series(Y_pred, index=store_ids))
 

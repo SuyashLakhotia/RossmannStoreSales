@@ -122,11 +122,11 @@ test_df.drop(["Open", "StateHoliday", "SchoolHoliday"], axis=1, inplace=True)
 def rmspe(y_true, y_pred):
     w = np.zeros(y_pred.shape, dtype=float)
     index = y_pred != 0
-    w[index] = 1.0/(y_pred[index]**2)
+    w[index] = 1.0 / (y_pred[index]**2)
     diff = y_pred - y_true
     diff_squared = diff ** 2
     diff_percentage_squared = diff_squared * w
-    rmspe = np.sqrt(np.mean( diff_percentage_squared ))
+    rmspe = np.sqrt(np.mean(diff_percentage_squared))
     return rmspe
 
 
