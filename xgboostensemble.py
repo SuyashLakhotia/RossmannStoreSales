@@ -1,6 +1,6 @@
 """
 Current Best Result:
-- Private Score: 0.11880, Public Score: 0.10648, i = 0.67, j = 0.970
+- Private Score: 0.11880, Public Score: 0.10640, i = 0.67, j = 0.970
 
 Past Results:
 - Private Score: 0.12057, Public Score: 0.10934, i = 0.75, j = 0.99
