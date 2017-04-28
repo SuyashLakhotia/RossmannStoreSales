@@ -142,7 +142,7 @@ def rmspe(y_true, y_pred):
 """
 Treating each store as an independent regression problem, loop through all stores training the model for the particular store and predicting its sales value.
 
-Features: Promo, SchoolHoliday, DayOfWeek (one-hot encoded), StateHoliday (one-hot encoded)
+Features: Promo, SchoolHoliday, DayOfWeek, StateHoliday
 
 Assumptions:
 - The Year-Month has no effect on the sales as testing data is only for 2015-08 & 2015-09.
