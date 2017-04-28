@@ -1,6 +1,8 @@
 # Rossmann Store Sales
 
-> Forecast sales using store, promotion and competitor data. [Kaggle Competition](https://www.kaggle.com/c/rossmann-store-sales).
+> Forecast sales using store, promotion and competitor data. [Link to Kaggle Competition](https://www.kaggle.com/c/rossmann-store-sales).
+
+A complete list of models developed for this problem can be found [here](List%20of%20Models.md) and the final report with a detailed explanation of our approach and observations is included [here](Report.pdf). Additionally, each `model-name.py` file includes a description of the assumptions made &amp; features used for the model as well as the final RMSPE scores for the predictions (from Kaggle).
 
 ### Team:
 
