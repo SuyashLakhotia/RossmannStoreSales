@@ -13,4 +13,4 @@ A complete list of models developed for this problem can be found [here](List%20
 
 ****
 
-***Disclaimer:*** This repo is no longer maintained and was submitted as part of the coursework assignment for CZ 4041 at NTU in AY16/17 Semester 2.
+***Disclaimer:*** This repo is no longer maintained and was submitted as part of the course project for CZ 4041 Machine Learning at NTU in AY 16/17 Semester 2.
